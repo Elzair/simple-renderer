@@ -1,10 +1,13 @@
 #ifndef __COMMON_HPP__
 #define __COMMON_HPP__
 
-#include "base-includes.hpp"
+//#include "base-includes.hpp"
 //#include "memory.hpp"
 //#include "vkextensions.hpp"
 //#include "vertex.hpp"
+#include <string>
+#include <vector>
+#include <vulkan/vulkan.h>
 
 const int WIDTH  = 800;
 const int HEIGHT = 600;

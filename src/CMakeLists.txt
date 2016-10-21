@@ -1,7 +1,21 @@
 
 include_directories(${VULKAN_INCLUDE_DIR} ${GLFW_INCLUDE_DIR})
 
-add_executable(renderer main.cpp)
+set(SOURCE_FILES
+  application.cpp
+  buffer.cpp
+  commandbuffer.cpp
+  device.cpp
+  image.cpp
+  instance.cpp
+  main.cpp
+  model.cpp
+  shader.cpp
+  swapchain.cpp
+  texture.cpp
+  utils.cpp)
+
+add_executable(renderer ${SOURCE_FILES})
 
 target_link_libraries(renderer ${VULKAN_LIBRARY} ${GLFW_LIBRARIES})
 set_property(TARGET renderer PROPERTY CXX_STANDARD 11)
