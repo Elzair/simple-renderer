@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "common.hpp"
 #include "commandbuffer.hpp"
 
 CommandBuffer::CommandBuffer( VkDevice        device,
@@ -21,12 +21,9 @@ void CommandBuffer::init( VkDevice        device,
                           VkCommandPool   pool,
                           VkCommandBuffer cmdbuff )
 {
-    if ( device == VK_NULL_HANDLE ||
-         queue == VK_NULL_HANDLE ||
-         pool == VK_NULL_HANDLE )
-    {
-        throw std::invalid_argument( "Attempt to initialize CommandBuffer with invalid arguments!" );
-    }
+    assert( ( device != VK_NULL_HANDLE ) &&
+            ( queue != VK_NULL_HANDLE ) &&
+            ( pool != VK_NULL_HANDLE ) );
 
     this->device    = device;
     this->queue     = queue;
@@ -76,10 +73,7 @@ void CommandBuffer::deinit(  )
 
 void CommandBuffer::begin( CommandBufferUsage usage )
 {
-    if ( !this->initialized )
-    {
-        throw std::runtime_error( "Tried to began an uninitialized command buffer!" );
-    }
+    assert( this->initialized );
 
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -100,29 +94,21 @@ void CommandBuffer::begin( CommandBufferUsage usage )
 
 void CommandBuffer::end(  )
 {
-    if ( !this->initialized || !this->began )
-    {
-        throw std::runtime_error( "Cannot end an uninitialized/empty command buffer!" );
-    }
-    else if ( this->ended )
+    assert( this->initialized && this->began );
+
+    if ( this->ended )
     {
         return;
     }
 
-    if ( vkEndCommandBuffer( this->id ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to record command buffer!" );
-    }
+    VK_CHECK_RESULT( vkEndCommandBuffer( this->id ) );
 
     this->ended = true;
 }
 
 void CommandBuffer::submit(  )
 {
-    if ( !this->initialized || !this->began )
-    {
-        throw std::runtime_error( "Cannot submit an uninitialized/empty command buffer!" );
-    }
+    assert( this->initialized && this->began );
 
     if ( !this->ended )
     {
@@ -172,12 +158,9 @@ void CommandBuffers::init( VkDevice      device,
     allocateInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocateInfo.commandBufferCount = (uint32_t)this->buffpriv.size();
 
-    if ( vkAllocateCommandBuffers( this->device,
-                                   &allocateInfo,
-                                   this->buffpriv.data() ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to allocate command buffers!" );
-    }
+    VK_CHECK_RESULT( vkAllocateCommandBuffers( this->device,
+                                               &allocateInfo,
+                                               this->buffpriv.data() ) );
 
     for ( std::size_t i = 0; i < this->buffers.size(); i++ )
     {

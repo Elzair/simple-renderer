@@ -1,8 +1,6 @@
 #ifndef __UTILS_HPP__
 #define __UTILS_HPP__
 
-//#include "base-includes.hpp"
-
 #include <vector>
 
 #define GLFW_INCLUDE_VULKAN

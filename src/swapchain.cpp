@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "common.hpp"
 
 #include "swapchain.hpp"
     
@@ -81,13 +81,10 @@ void SwapChain::init( VkPhysicalDevice      physical,
 
     // Create swapchain
     VkSwapchainKHR newSwapchain = VK_NULL_HANDLE;
-    if ( vkCreateSwapchainKHR( this->device,
-                               &createInfo,
-                               nullptr,
-                               &newSwapchain ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create swapchain!" );
-    }
+    VK_CHECK_RESULT( vkCreateSwapchainKHR( this->device,
+                                           &createInfo,
+                                           nullptr,
+                                           &newSwapchain ) );
     *&this->id = newSwapchain;
 
     // Retrieve handles to all swapchain images
@@ -167,13 +164,10 @@ void SwapChain::createFramebuffers( VkRenderPass renderPass,
         framebufferCreateInfo.height          = this->extent.height;
         framebufferCreateInfo.layers          = 1;
 
-        if ( vkCreateFramebuffer( this->device,
-                                  &framebufferCreateInfo,
-                                  nullptr,
-                                  &this->framebuffers[i] ) != VK_SUCCESS )
-        {
-            throw std::runtime_error( "Failed to create framebuffer!" );
-        }
+        VK_CHECK_RESULT( vkCreateFramebuffer( this->device,
+                                              &framebufferCreateInfo,
+                                              nullptr,
+                                              &this->framebuffers[i] ) );
     }
 }
 
@@ -257,11 +251,10 @@ VkImageView SwapChain::createImageView( VkImage            image,
 
     VkImageView view = VK_NULL_HANDLE;
 
-    if ( vkCreateImageView( this->device, &viewInfo,
-                            nullptr, &view ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create texture image view!" );
-    }
+    VK_CHECK_RESULT( vkCreateImageView( this->device,
+                                        &viewInfo,
+                                        nullptr,
+                                        &view ) );
 
     return view;
 }

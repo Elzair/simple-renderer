@@ -4,16 +4,14 @@
 
 #include <vulkan/vulkan.h>
 
+#include "common.hpp"
 #include "shader.hpp"
 
 std::vector<char> readFile( const std::string& filename )
 {
     std::ifstream file( filename, std::ios::ate | std::ios::binary );
 
-    if ( !file.is_open() )
-    {
-        throw std::runtime_error( "Failed to open SPIRV file!" );
-    }
+    assert( file.is_open() );
 
     std::size_t fileSize = (std::size_t) file.tellg();
     std::vector<char> buffer( fileSize );
@@ -37,11 +35,10 @@ VkShaderModule createShaderModule(
 
     VkShaderModule shaderModule = VK_NULL_HANDLE;
   
-    if ( vkCreateShaderModule( device, &shaderCreateInfo,
-                               nullptr, &shaderModule ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create shader module!" );
-    }
+    VK_CHECK_RESULT( vkCreateShaderModule( device,
+                                           &shaderCreateInfo,
+                                           nullptr,
+                                           &shaderModule ) );
 
     return shaderModule;
 }

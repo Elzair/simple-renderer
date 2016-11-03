@@ -1,5 +1,5 @@
-#include <stdexcept>
 #include <cstring>
+#include "common.hpp"
 #include "buffer.hpp"
 
 Buffer::Buffer( VkPhysicalDevice physical,
@@ -93,10 +93,7 @@ void Buffer::copy( void*       data,
                    bool        toDevice,
                    std::size_t len )
 {
-    if ( !this->initialized )
-    {
-        throw std::runtime_error( "Cannot copy to uninitialized buffer!" );
-    }
+    assert( this->initialized );
 
     len = ( len > this->size ) ? this->size : len;
 
@@ -146,11 +143,10 @@ VkBuffer Buffer::createBuffer( VkBufferUsageFlags usage )
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VkBuffer buffer = VK_NULL_HANDLE;
-    if ( vkCreateBuffer( this->device, &bufferInfo,
-                         nullptr, &buffer ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create buffer!" );
-    }
+    VK_CHECK_RESULT( vkCreateBuffer( this->device,
+                                     &bufferInfo,
+                                     nullptr,
+                                     &buffer ) );
 
     return buffer;
 }
@@ -171,11 +167,10 @@ VkDeviceMemory Buffer::allocateMemory( VkBuffer              buffer,
                                                 props );
 
     VkDeviceMemory memory2 = VK_NULL_HANDLE;
-    if ( vkAllocateMemory( this->device, &allocInfo,
-                           nullptr, &memory2 ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to allocate buffer memory!" );
-    }
+    VK_CHECK_RESULT( vkAllocateMemory( this->device,
+                                       &allocInfo,
+                                       nullptr,
+                                       &memory2 ) );
 
     vkBindBufferMemory( this->device, buffer, memory2, 0 );
 

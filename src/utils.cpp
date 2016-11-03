@@ -1,6 +1,5 @@
 #include <cstring>
-#include <stdexcept>
-
+#include "common.hpp"
 #include "utils.hpp"
 
 /*
@@ -29,7 +28,8 @@ VkFormat FindSupportedFormat( VkPhysicalDevice             physical,
         }
     }
 
-    throw std::runtime_error( "Failed to find supported format!" );
+    std::cerr << __FILE__ << " " << __func__ << " " << __LINE__ << ": Failed to find supported format" << std::endl;
+    assert( 0 );
 }
 
 VkFormat FindDepthFormat( VkPhysicalDevice physical )
@@ -117,9 +117,15 @@ bool CheckDeviceExtensionSupport(
     )
 {
     uint32_t extensionCount;
-    vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
+    vkEnumerateDeviceExtensionProperties( device,
+                                          nullptr,
+                                          &extensionCount,
+                                          nullptr );
     std::vector<VkExtensionProperties> availableExtensions( extensionCount );
-    vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
+    vkEnumerateDeviceExtensionProperties( device,
+                                          nullptr,
+                                          &extensionCount,
+                                          availableExtensions.data() );
 
     // Ensure all required extensions are available on device
     for ( const auto& requiredExt : requiredDeviceExtensions )
@@ -224,10 +230,7 @@ VkPhysicalDevice PickPhysicalDevice(
 {
     uint32_t devCount = 0;
     vkEnumeratePhysicalDevices( instance, &devCount, nullptr);
-    if ( devCount == 0 )
-    {
-        throw std::runtime_error( "Failed to find GPUs with Vulkan support!" );
-    }
+    assert( devCount > 0 );
     std::vector<VkPhysicalDevice> physicalDevices( devCount );
     vkEnumeratePhysicalDevices( instance, &devCount, physicalDevices.data() );
 
@@ -239,7 +242,8 @@ VkPhysicalDevice PickPhysicalDevice(
         }
     }
 
-    throw std::runtime_error( "Failed to find a suitable GPU!" );
+    std::cerr << __FILE__ << " " << __func__ << " " << __LINE__ << ": Failed to find a suitable GPU!" << std::endl;
+    assert( 0 );
 }
 
 /*
@@ -300,5 +304,6 @@ uint32_t FindMemoryType( VkPhysicalDevice      physical,
         }
     }
 
-    throw std::runtime_error( "Failed to find suitable memory type!" );
+    std::cerr << __FILE__ << " " << __func__ << " " << __LINE__ << ": Failed to find a suitable memory type!" << std::endl;
+    assert( 0 );
 }

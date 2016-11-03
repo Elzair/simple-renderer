@@ -1,4 +1,6 @@
 #include "application.hpp"
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 
 /*
  * Public Methods
@@ -228,10 +230,7 @@ void VulkanApplication::drawFrame(  )
         this->recreateSwapChain( this->width, this->height );
         return;
     }
-    else if ( result != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to present swap chain image!" );
-    }
+    VK_CHECK_RESULT( result );
 
     // Submit command buffer
     VkSemaphore waitSemaphores[]      = { this->imageAvailableSemaphore };
@@ -248,13 +247,10 @@ void VulkanApplication::drawFrame(  )
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores    = signalSemaphores;
 
-    if ( vkQueueSubmit( this->device.graphicsQueue,
-                        1,
-                        &submitInfo,
-                        VK_NULL_HANDLE ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to submit draw command buffer!" );
-    }
+    VK_CHECK_RESULT( vkQueueSubmit( this->device.graphicsQueue,
+                                    1,
+                                    &submitInfo,
+                                    VK_NULL_HANDLE ) );
 
     // Submit result to swap chain
     VkSwapchainKHR swapchains[] = { this->swapchain.id };
@@ -281,13 +277,10 @@ void VulkanApplication::createSurface(  )
     glfwSetWindowSizeCallback( this->window, VulkanApplication::onWindowResized );
 
     // Create surface context
-    if ( glfwCreateWindowSurface( this->instance.id,
-                                  this->window,
-                                  nullptr,
-                                  &this->surface ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create window surface!" );
-    }
+    VK_CHECK_RESULT( glfwCreateWindowSurface( this->instance.id,
+                                              this->window,
+                                              nullptr,
+                                              &this->surface ) );
 }
 
 void VulkanApplication::createRenderPass()
@@ -352,11 +345,8 @@ void VulkanApplication::createRenderPass()
     renderPassCreateInfo.dependencyCount = 1;
     renderPassCreateInfo.pDependencies   = &dependency;
 
-    if ( vkCreateRenderPass( this->device.id, &renderPassCreateInfo,
-                             nullptr, &this->renderPass ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create render pass!" );
-    }
+    VK_CHECK_RESULT( vkCreateRenderPass( this->device.id, &renderPassCreateInfo,
+                                         nullptr, &this->renderPass ) );
 }
 
 void VulkanApplication::createDescriptorSetLayout(  )
@@ -387,13 +377,10 @@ void VulkanApplication::createDescriptorSetLayout(  )
     layoutInfo.bindingCount = bindings.size();
     layoutInfo.pBindings    = bindings.data();
 
-    if ( vkCreateDescriptorSetLayout( this->device.id,
-                                      &layoutInfo,
-                                      nullptr,
-                                      &this->descriptorSetLayout ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create descriptor set layout!" );
-    }
+    VK_CHECK_RESULT( vkCreateDescriptorSetLayout( this->device.id,
+                                                  &layoutInfo,
+                                                  nullptr,
+                                                  &this->descriptorSetLayout ) );
 }
 
 void VulkanApplication::createGraphicsPipeline(  )
@@ -532,13 +519,10 @@ void VulkanApplication::createGraphicsPipeline(  )
     pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
     pipelineLayoutCreateInfo.pPushConstantRanges    = 0;
 
-    if (vkCreatePipelineLayout( this->device.id,
-                                &pipelineLayoutCreateInfo,
-                                nullptr,
-                                &this->pipelineLayout ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create pipeline layout!" );
-    }
+    VK_CHECK_RESULT( vkCreatePipelineLayout( this->device.id,
+                                             &pipelineLayoutCreateInfo,
+                                             nullptr,
+                                             &this->pipelineLayout ) );
 
     // Create Graphics Pipeline
     VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
@@ -559,15 +543,12 @@ void VulkanApplication::createGraphicsPipeline(  )
     pipelineCreateInfo.basePipelineHandle  = VK_NULL_HANDLE;
     pipelineCreateInfo.basePipelineIndex   = -1;
 
-    if ( vkCreateGraphicsPipelines( this->device.id,
-                                    VK_NULL_HANDLE,
-                                    1,
-                                    &pipelineCreateInfo,
-                                    nullptr,
-                                    &this->graphicsPipeline ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create graphics pipeline!" );
-    }
+    VK_CHECK_RESULT( vkCreateGraphicsPipelines( this->device.id,
+                                                VK_NULL_HANDLE,
+                                                1,
+                                                &pipelineCreateInfo,
+                                                nullptr,
+                                                &this->graphicsPipeline ) );
 
     vkDestroyShaderModule( this->device.id, fragmentShader, nullptr );
     vkDestroyShaderModule( this->device.id, vertexShader, nullptr );
@@ -580,13 +561,10 @@ void VulkanApplication::createCommandPool(  )
     poolCreateInfo.queueFamilyIndex = this->device.graphicsQueueIdx; 
     poolCreateInfo.flags            = 0;
 
-    if ( vkCreateCommandPool( this->device.id,
-                              &poolCreateInfo,
-                              nullptr,
-                              &this->commandPool ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create command pool!" );
-    }
+    VK_CHECK_RESULT( vkCreateCommandPool( this->device.id,
+                                          &poolCreateInfo,
+                                          nullptr,
+                                          &this->commandPool ) );
 }
 
 void VulkanApplication::createDescriptorPool(  )
@@ -603,11 +581,10 @@ void VulkanApplication::createDescriptorPool(  )
     poolInfo.pPoolSizes    = poolSizes.data();
     poolInfo.maxSets       = 1;
     
-    if ( vkCreateDescriptorPool( this->device.id, &poolInfo,
-                                 nullptr, &this->descriptorPool ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create descriptor pool!" );
-    }
+    VK_CHECK_RESULT( vkCreateDescriptorPool( this->device.id,
+                                             &poolInfo,
+                                             nullptr,
+                                             &this->descriptorPool ) );
 }
 
 void VulkanApplication::createDescriptorSet(  )
@@ -620,12 +597,9 @@ void VulkanApplication::createDescriptorSet(  )
     allocInfo.descriptorSetCount = 1;
     allocInfo.pSetLayouts        = layouts;
 
-    if ( vkAllocateDescriptorSets( this->device.id,
-                                   &allocInfo,
-                                   &this->descriptorSet ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to allocate descriptor set!" );
-    }
+    VK_CHECK_RESULT( vkAllocateDescriptorSets( this->device.id,
+                                               &allocInfo,
+                                               &this->descriptorSet ) );
 
     // Now create buffer to hold uniform data
     VkDescriptorBufferInfo bufferInfo = {};
@@ -736,13 +710,14 @@ void VulkanApplication::createSemaphores(  )
     VkSemaphoreCreateInfo semaphoreCreateInfo = {};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-    if ( vkCreateSemaphore( this->device.id, &semaphoreCreateInfo,
-                            nullptr, &this->imageAvailableSemaphore ) != VK_SUCCESS ||
-         vkCreateSemaphore( this->device.id, &semaphoreCreateInfo,
-                            nullptr, &this->renderFinishSemaphore ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create semaphore!" );
-    }
+    VK_CHECK_RESULT( vkCreateSemaphore( this->device.id,
+                                        &semaphoreCreateInfo,
+                                        nullptr,
+                                        &this->imageAvailableSemaphore ) );
+    VK_CHECK_RESULT( vkCreateSemaphore( this->device.id,
+                                        &semaphoreCreateInfo,
+                                        nullptr,
+                                        &this->renderFinishSemaphore ) );
 }
 
 VkBool32 VulkanApplication::debugCallback(
@@ -771,11 +746,8 @@ void VulkanApplication::createDebugCallback()
     crinfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
     crinfo.pfnCallback = this->debugCallback;
 
-    if ( CreateDebugReportCallbackEXT( this->instance.id,
-                                       &crinfo,
-                                       nullptr,
-                                       &this->callback ) )
-    {
-        throw std::runtime_error( "Failed to setup debug callback!" );
-    }
+    VK_CHECK_RESULT( CreateDebugReportCallbackEXT( this->instance.id,
+                                                   &crinfo,
+                                                   nullptr,
+                                                   &this->callback ) );
 }

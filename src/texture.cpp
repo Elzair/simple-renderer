@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "common.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdparty/stb_image.h"
@@ -34,12 +34,8 @@ void Texture::init( VkPhysicalDevice physical,
                                         &texHeight,
                                         &texChannels,
                                         STBI_rgb_alpha );
+    assert( pixels );
     VkDeviceSize imageSize = texWidth * texHeight * 4;
-
-    if ( !pixels )
-    {
-        throw std::runtime_error( "Failed to load texture image!" );
-    }
 
     // Create texture
     Image::init( physical,
@@ -86,12 +82,9 @@ void Texture::createSampler(  )
     samplerInfo.mipLodBias              = 0.0f;
     samplerInfo.minLod                  = 0.0f;
     samplerInfo.maxLod                  = 0.0f;
-    
-    if ( vkCreateSampler( this->device,
-                          &samplerInfo,
-                          nullptr,
-                          &this->sampler ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create texture sampler!" );
-    }
+
+    VK_CHECK_RESULT( vkCreateSampler( this->device,
+                                      &samplerInfo,
+                                      nullptr,
+                                      &this->sampler ) );
 }

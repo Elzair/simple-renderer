@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "common.hpp"
 #include "instance.hpp"
 
 Instance::Instance( const std::string              applicationName,
@@ -56,10 +56,7 @@ void Instance::init( const std::string              applicationName,
         instCreateInfo.enabledLayerCount = 0;
     }
 
-    if ( vkCreateInstance( &instCreateInfo, nullptr, &this->id ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create instance!" );
-    }
+    VK_CHECK_RESULT( vkCreateInstance( &instCreateInfo, nullptr, &this->id ) );
 }
 
 void Instance::deinit(  )

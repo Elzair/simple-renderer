@@ -1,5 +1,5 @@
 #include <set>
-#include <stdexcept>
+#include "common.hpp"
 #include "utils.hpp"
 #include "device.hpp"
 
@@ -66,11 +66,10 @@ void Device::init( VkPhysicalDevice               physical,
         devCreateInfo.enabledLayerCount = 0;
     }
 
-    if ( vkCreateDevice( physical, &devCreateInfo,
-                         nullptr, &this->id ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create logical device!" );
-    }
+    VK_CHECK_RESULT( vkCreateDevice( physical,
+                                     &devCreateInfo,
+                                     nullptr,
+                                     &this->id ) );
 
     // Retrieve handles for graphics and presentation queues
     vkGetDeviceQueue( this->id, this->graphicsQueueIdx,

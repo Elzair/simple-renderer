@@ -1,5 +1,4 @@
 #define TINYOBJLOADER_IMPLEMENTATION
-//#include "base-includes.hpp"
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -89,12 +88,11 @@ void Model::init( VkPhysicalDevice physical,
     std::vector<tinyobj::material_t> materials;
     std::string                      err;
 
-    if ( !tinyobj::LoadObj( &attrib, &shapes,
-                            &materials, &err,
-                            fileName.c_str() ) )
-    {
-        throw std::runtime_error( err );
-    }
+    assert( tinyobj::LoadObj( &attrib,
+                              &shapes,
+                              &materials,
+                              &err,
+                              fileName.c_str() ) );
 
     std::vector<Vertex>              vertices;
     std::unordered_map<Vertex, int>  uniqueVertices = {};

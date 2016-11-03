@@ -1,5 +1,5 @@
 #include <cstring>
-#include <stdexcept>
+#include "common.hpp"
 #include "image.hpp"
 
 Image::Image( VkPhysicalDevice physical,
@@ -86,13 +86,10 @@ void Image::init( VkPhysicalDevice physical,
     imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
     imageInfo.initialLayout = initialLayout;
 
-    if ( vkCreateImage( this->device,
-                        &imageInfo,
-                        nullptr,
-                        &this->id ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create image!" );
-    }
+    VK_CHECK_RESULT( vkCreateImage( this->device,
+                                    &imageInfo,
+                                    nullptr,
+                                    &this->id ) );
 
     VkMemoryRequirements memRequirements;
     vkGetImageMemoryRequirements( this->device,
@@ -105,14 +102,11 @@ void Image::init( VkPhysicalDevice physical,
     allocInfo.memoryTypeIndex = FindMemoryType( physical,
                                                 memRequirements.memoryTypeBits,
                                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT );
-
-    if ( vkAllocateMemory( this->device,
-                           &allocInfo,
-                           nullptr,
-                           &this->memory ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to allocate image memory!" );
-    }
+    
+    VK_CHECK_RESULT( vkAllocateMemory( this->device,
+                                       &allocInfo,
+                                       nullptr,
+                                       &this->memory ) );
 
     vkBindImageMemory( this->device, this->id, this->memory, 0 );
 
@@ -136,13 +130,10 @@ void Image::init( VkPhysicalDevice physical,
         stagingInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
         stagingInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 
-        if ( vkCreateImage( this->device,
-                            &stagingInfo,
-                            nullptr ,
-                            &staging ) != VK_SUCCESS )
-        {
-            throw std::runtime_error( "Failed to create staging image!" );
-        }
+        VK_CHECK_RESULT( vkCreateImage( this->device,
+                                        &stagingInfo,
+                                        nullptr ,
+                                        &staging ) );
             
         VkMemoryRequirements stagingMemReqs;
         vkGetImageMemoryRequirements( this->device,
@@ -157,13 +148,10 @@ void Image::init( VkPhysicalDevice physical,
                                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                                                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT );
 
-        if ( vkAllocateMemory( this->device,
-                               &saInfo,
-                               nullptr,
-                               &stagingMemory ) != VK_SUCCESS )
-        {
-            throw std::runtime_error( "Failed to allocate memory for staging image!" );
-        }
+        VK_CHECK_RESULT( vkAllocateMemory( this->device,
+                                           &saInfo,
+                                           nullptr,
+                                           &stagingMemory ) );
 
         vkBindImageMemory( this->device, staging, stagingMemory, 0 );
 
@@ -171,7 +159,7 @@ void Image::init( VkPhysicalDevice physical,
         void* stagingData;
         vkMapMemory( this->device, stagingMemory, 0,
                      dataSize, 0, &stagingData );
-        std::memcpy( stagingData, data, (size_t)dataSize );
+        std::memcpy( stagingData, data, (std::size_t)dataSize );
         vkUnmapMemory( this->device, stagingMemory );
 
         // Optimize image layouts
@@ -222,12 +210,10 @@ void Image::createView( VkImageAspectFlags aspectFlags )
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount     = 1;
 
-    if ( vkCreateImageView( this->device, &viewInfo,
-                            nullptr, &this->view ) != VK_SUCCESS )
-    {
-        throw std::runtime_error( "Failed to create texture image view!" );
-    }
-
+    VK_CHECK_RESULT( vkCreateImageView( this->device,
+                                        &viewInfo,
+                                        nullptr,
+                                        &this->view ) );
 }
 
 void Image::transitionLayout( VkImage       image,
@@ -283,7 +269,8 @@ void Image::transitionLayout( VkImage       image,
     }
     else
     {
-        throw std::invalid_argument( "Unsupported layout transition!" );
+        std::cerr << __FILE__ << " " << __func__ << " " << __LINE__ << ": Unsupported layout transition!" << std::endl;
+        assert( 0 );
     }
 
     vkCmdPipelineBarrier( commandBuffer.id,
@@ -329,5 +316,6 @@ void Image::copy( VkImage src )
                     1,
                     &region );
 
+    commandBuffer.end();
     commandBuffer.submit();
 }
