@@ -6,7 +6,7 @@
 #include <vulkan/vulkan.h>
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "3rdparty/tiny_obj_loader.h"
+#include <tiny_obj_loader.h>
 
 #include "model.hpp"
 

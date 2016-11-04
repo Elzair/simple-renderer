@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "3rdparty/stb_image.h"
+#include <stb_image.h>
 
 #include "texture.hpp"
 

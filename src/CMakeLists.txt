@@ -1,5 +1,5 @@
 
-include_directories(${VULKAN_INCLUDE_DIR} ${GLFW_INCLUDE_DIR})
+
 
 set(SOURCE_FILES
   application.cpp
@@ -17,7 +17,15 @@ set(SOURCE_FILES
 
 add_executable(renderer ${SOURCE_FILES})
 
-target_link_libraries(renderer ${VULKAN_LIBRARY} ${GLFW_LIBRARIES})
+target_include_directories(renderer PUBLIC ${VULKAN_INCLUDE_DIR} PUBLIC ${GLFW_INCLUDE_DIR})
+
+target_link_libraries(renderer
+  ${VULKAN_LIBRARY}
+  ${GLFW_LIBRARIES}
+  obj_loader
+  stb::image
+  dynlink)
+
 set_property(TARGET renderer PROPERTY CXX_STANDARD 11)
 set_property(TARGET renderer PROPERTY CXX_STANDARD_REQUIRED ON)
 

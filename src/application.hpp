@@ -14,7 +14,6 @@
 #include <chrono>
 #include <functional>
 #include <iostream>
-//#include <stdexcept>
 #include <vector>
 
 #include "buffer.hpp"

@@ -1,0 +1,3 @@
+-I../3rdparty/dynlink/include
+-I../3rdparty/obj_loader/include
+-I../3rdparty/stb/include
