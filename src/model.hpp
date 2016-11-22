@@ -1,7 +1,5 @@
-#ifndef __MODEL_HPP
-#define __MODEL_HPP
+#pragma once
 
-//#include "base-includes.hpp"
 #include <string>
 #include <vulkan/vulkan.h>
 
@@ -80,5 +78,3 @@ public:
 
     void deinit();
 };
-
-#endif

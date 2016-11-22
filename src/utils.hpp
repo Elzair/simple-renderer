@@ -1,5 +1,4 @@
-#ifndef __UTILS_HPP__
-#define __UTILS_HPP__
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -105,5 +104,3 @@ void DestroyDebugReportCallbackEXT(
 uint32_t FindMemoryType( VkPhysicalDevice      physical,
                          uint32_t              typeFilter,
                          VkMemoryPropertyFlags props );
-
-#endif

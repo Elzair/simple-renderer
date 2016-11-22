@@ -1,7 +1,5 @@
-#ifndef __BUFFER_HPP__
-#define __BUFFER_HPP__
+#pragma once
 
-//#include "base-includes.hpp"
 #include "commandbuffer.hpp"
 #include "utils.hpp"
 
@@ -62,5 +60,3 @@ private:
     VkDeviceMemory allocateMemory( VkBuffer              buffer,
                                    VkMemoryPropertyFlags props );
 };
-
-#endif

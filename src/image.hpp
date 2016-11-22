@@ -1,9 +1,7 @@
-#ifndef __IMAGE_HPP__
-#define __IMAGE_HPP__
+#pragma once
 
 #include <vulkan/vulkan.h>
 
-//#include "base-includes.hpp"
 #include "utils.hpp"
 #include "commandbuffer.hpp"
 
@@ -70,5 +68,3 @@ protected:
 
     void copy( VkImage src );
 };
-
-#endif

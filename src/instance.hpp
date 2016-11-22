@@ -1,7 +1,4 @@
-#ifndef __INSTANCE_HPP__
-#define __INSTANCE_HPP__
-
-//#include "base-includes.hpp"
+#pragma once
 
 #include <string>
 #include <vector>
@@ -43,5 +40,3 @@ public:
 
     void deinit();
 };
-
-#endif

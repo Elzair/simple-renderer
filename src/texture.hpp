@@ -1,5 +1,4 @@
-#ifndef __TEXTURE_HPP__
-#define __TEXTURE_HPP__
+#pragma once
 
 #include <string>
 
@@ -38,5 +37,3 @@ private:
     
     void createSampler();
 };
-
-#endif

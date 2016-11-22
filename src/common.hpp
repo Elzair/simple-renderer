@@ -1,5 +1,4 @@
-#ifndef __COMMON_HPP__
-#define __COMMON_HPP__
+#pragma once
 
 #include <iostream>
 #include <cassert>
@@ -123,7 +122,5 @@ const std::vector<const char*> requiredDeviceExtensions = {
 };
 
 #define VK_CHECK_RESULT( res ) CheckResult( res, __FILE__, __func__, __LINE__ )
-
-#endif
 
 #endif

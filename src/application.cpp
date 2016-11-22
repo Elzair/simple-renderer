@@ -13,7 +13,7 @@ void VulkanApplication::run( int width, int height )
     mainLoop();
 }
 
-VulkanApplication::~VulkanApplication(  )
+VulkanApplication::~VulkanApplication()
 {
     vkDestroySemaphore( this->device.id, this->renderFinishSemaphore, nullptr );
     vkDestroySemaphore( this->device.id, this->imageAvailableSemaphore, nullptr );
@@ -170,7 +170,7 @@ void VulkanApplication::recreateSwapChain( int width, int height )
                              this->width,
                              this->height,
                              { (uint32_t)this->device.graphicsQueueIdx,
-                                     (uint32_t)this->device.presentQueueIdx } );
+                               (uint32_t)this->device.presentQueueIdx } );
     this->createRenderPass();
 
     this->createGraphicsPipeline();
@@ -191,7 +191,7 @@ void VulkanApplication::recreateSwapChain( int width, int height )
     this->createCommandBuffers();
 }
 
-void VulkanApplication::updateUniformBuffer(  )
+void VulkanApplication::updateUniformBuffer()
 {
     static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -216,7 +216,7 @@ void VulkanApplication::updateUniformBuffer(  )
     this->uniform.copy( (void*)&ubo, true, sizeof(ubo) );
 }
 
-void VulkanApplication::drawFrame(  )
+void VulkanApplication::drawFrame()
 {
     uint32_t imageIdx;
     auto result = vkAcquireNextImageKHR( this->device.id,
@@ -267,7 +267,7 @@ void VulkanApplication::drawFrame(  )
     vkQueuePresentKHR( this->device.presentQueue, &presentInfo );
 }
 
-void VulkanApplication::createSurface(  )
+void VulkanApplication::createSurface()
 {
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
     
@@ -349,7 +349,7 @@ void VulkanApplication::createRenderPass()
                                          nullptr, &this->renderPass ) );
 }
 
-void VulkanApplication::createDescriptorSetLayout(  )
+void VulkanApplication::createDescriptorSetLayout()
 {
     // Creatout layout for uniform buffer
     VkDescriptorSetLayoutBinding uboLayoutBinding = {};
@@ -505,8 +505,6 @@ void VulkanApplication::createGraphicsPipeline(  )
     // Create Graphics Pipeline
     VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
     pipelineCreateInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    //pipelineCreateInfo.stageCount          = 2;
-    //pipelineCreateInfo.pStages             = shaderStages;
     pipelineCreateInfo.stageCount          = shader.num_modules;
     pipelineCreateInfo.pStages             = &shader.pipeline_info[ 0 ];
     pipelineCreateInfo.pVertexInputState   = &vertexInputCreateInfo;
@@ -531,7 +529,7 @@ void VulkanApplication::createGraphicsPipeline(  )
                                                 &this->graphicsPipeline ) );
 }
 
-void VulkanApplication::createCommandPool(  )
+void VulkanApplication::createCommandPool()
 {
     VkCommandPoolCreateInfo poolCreateInfo = {};
     poolCreateInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -544,7 +542,7 @@ void VulkanApplication::createCommandPool(  )
                                           &this->commandPool ) );
 }
 
-void VulkanApplication::createDescriptorPool(  )
+void VulkanApplication::createDescriptorPool()
 {
     std::array<VkDescriptorPoolSize, 2> poolSizes = {};
     poolSizes[0].type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -564,7 +562,7 @@ void VulkanApplication::createDescriptorPool(  )
                                              &this->descriptorPool ) );
 }
 
-void VulkanApplication::createDescriptorSet(  )
+void VulkanApplication::createDescriptorSet()
 {
     // Create initial descriptors
     VkDescriptorSetLayout       layouts[] = { this->descriptorSetLayout };
@@ -616,7 +614,7 @@ void VulkanApplication::createDescriptorSet(  )
                             nullptr );
 }
 
-void VulkanApplication::createCommandBuffers(  )
+void VulkanApplication::createCommandBuffers()
 {
     // Free old command buffers (if called from recreateSwapChain())
     this->commandBuffers.refresh( this->device.id,
@@ -682,7 +680,7 @@ void VulkanApplication::createCommandBuffers(  )
     }
 }
 
-void VulkanApplication::createSemaphores(  )
+void VulkanApplication::createSemaphores()
 {
     VkSemaphoreCreateInfo semaphoreCreateInfo = {};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -705,7 +703,7 @@ VkBool32 VulkanApplication::debugCallback(
     int32_t                    code,
     const char*                layerPrefix,
     const char*                msg,
-    void*                      userData)
+    void*                      userData )
 {
     std::cerr << "Validation layer: " << msg << std::endl;
     return VK_FALSE;

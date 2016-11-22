@@ -1,7 +1,5 @@
-#ifndef __DEVICE_HPP__
-#define __DEVICE_HPP__
+#pragma once
 
-//#include "base-includes.hpp"
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -35,5 +33,3 @@ public:
 
     void deinit();
 };
-
-#endif

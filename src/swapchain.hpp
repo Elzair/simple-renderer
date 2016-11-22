@@ -1,5 +1,4 @@
-#ifndef __SWAPCHAIN_HPP__
-#define __SWAPCHAIN_HPP__
+#pragma once
 
 #include <limits>
 
@@ -7,7 +6,6 @@
 
 #include <vulkan/vulkan.h>
 
-//#include "base-includes.hpp"
 #include "image.hpp"
 #include "utils.hpp"
 
@@ -79,5 +77,3 @@ private:
     VkImageView createImageView( VkImage            image,
                                  VkImageAspectFlags aspectFlags );
 };
-
-#endif

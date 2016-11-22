@@ -1,5 +1,4 @@
-#ifndef __APPLICATION_HPP__
-#define __APPLICATION_HPP__
+#pragma once
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -80,31 +79,31 @@ private:
     
     void initVulkan( int width, int height );
 
-    void mainLoop(  );
+    void mainLoop();
 
     void recreateSwapChain( int width, int height );
 
-    void updateUniformBuffer(  );
+    void updateUniformBuffer();
 
-    void drawFrame(  );
+    void drawFrame();
 
-    void createSurface(  );
+    void createSurface();
 
-    void createRenderPass(  );
+    void createRenderPass();
 
-    void createDescriptorSetLayout(  );
+    void createDescriptorSetLayout();
 
-    void createGraphicsPipeline(  );
+    void createGraphicsPipeline();
 
-    void createCommandPool(  );
+    void createCommandPool();
 
-    void createDescriptorPool(  );
+    void createDescriptorPool();
 
-    void createDescriptorSet(  );
+    void createDescriptorSet();
 
-    void createCommandBuffers(  );
+    void createCommandBuffers();
 
-    void createSemaphores(  );
+    void createSemaphores();
 
 #ifndef WIN32
 #define __stdcall
@@ -122,5 +121,3 @@ private:
 
     void createDebugCallback(  );
 };
-
-#endif

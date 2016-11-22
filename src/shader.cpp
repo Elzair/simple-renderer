@@ -42,7 +42,7 @@ void GraphicsShader::deinit()
 }
 
 void GraphicsShader::createShaderModule(
-    VkShaderStageFlagBits type,
+    VkShaderStageFlagBits stage,
     std::vector<uint8_t>  code 
     )
 {
@@ -62,7 +62,7 @@ void GraphicsShader::createShaderModule(
         auto& ps_info  = this->pipeline_info[ this->num_modules ];
         ps_info = {};
         ps_info.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        ps_info.stage  = type;
+        ps_info.stage  = stage;
         ps_info.module = this->modules[ this->num_modules ];
         ps_info.pName  = "main";
         

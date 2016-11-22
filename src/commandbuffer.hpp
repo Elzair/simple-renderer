@@ -1,7 +1,5 @@
-#ifndef __COMMANDBUFFER_HPP__
-#define __COMMANDBUFFER_HPP__
+#pragma once
 
-//#include "base-includes.hpp"
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -93,5 +91,3 @@ private:
     VkQueue                      queue  = VK_NULL_HANDLE;
     VkCommandPool                pool   = VK_NULL_HANDLE;
 };
-
-#endif

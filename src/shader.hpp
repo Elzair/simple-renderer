@@ -1,5 +1,4 @@
-#ifndef __SHADER_HPP__
-#define __SHADER_HPP__
+#pragma once
 
 #include <array>
 #include <fstream>
@@ -44,8 +43,6 @@ private:
 
     VkDevice device;
 
-    void createShaderModule( VkShaderStageFlagBits type,
+    void createShaderModule( VkShaderStageFlagBits stage,
                              std::vector<uint8_t>  code );
 };
-
-#endif
