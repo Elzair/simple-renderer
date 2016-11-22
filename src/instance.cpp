@@ -1,30 +1,6 @@
 #include "common.hpp"
 #include "instance.hpp"
 
-Instance::Instance( const std::string              applicationName,
-                    const std::string              engineName,
-                    const std::vector<const char*> extensions,
-                    const std::vector<const char*> validationLayers,
-                    uint32_t                       applicationVersion,
-                    uint32_t                       engineVersion,
-                    uint32_t                       apiVersion )
-{
-    this->init( applicationName,
-                engineName,
-                extensions,
-                validationLayers,
-                applicationVersion,
-                engineVersion,
-                apiVersion );
-}
-    
-Instance::Instance(  ) { }
-
-Instance::~Instance(  )
-{
-    this->deinit();
-}
-
 void Instance::init( const std::string              applicationName,
                      const std::string              engineName,
                      const std::vector<const char*> extensions,
@@ -59,7 +35,7 @@ void Instance::init( const std::string              applicationName,
     VK_CHECK_RESULT( vkCreateInstance( &instCreateInfo, nullptr, &this->id ) );
 }
 
-void Instance::deinit(  )
+void Instance::deinit()
 {
     if ( this->id != VK_NULL_HANDLE )
     {

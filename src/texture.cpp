@@ -5,22 +5,6 @@
 
 #include "texture.hpp"
 
-Texture::Texture( VkPhysicalDevice physical,
-                  VkDevice         device,
-                  VkQueue          queue,
-                  VkCommandPool    commandPool,
-                  std::string      fileName )
-{
-    this->init( physical, device, queue, commandPool, fileName );
-}
-
-Texture::Texture(  ) { }
-
-Texture::~Texture(  )
-{
-    this->deinit();
-}
-
 void Texture::init( VkPhysicalDevice physical,
                     VkDevice         device,
                     VkQueue          queue,
@@ -54,7 +38,7 @@ void Texture::init( VkPhysicalDevice physical,
     this->createSampler();
 }
 
-void Texture::deinit(  )
+void Texture::deinit()
 {
     if ( this->sampler != VK_NULL_HANDLE )
     {
@@ -63,7 +47,7 @@ void Texture::deinit(  )
     Image::deinit();
 }
     
-void Texture::createSampler(  )
+void Texture::createSampler()
 {
     VkSamplerCreateInfo samplerInfo = {};
     samplerInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;

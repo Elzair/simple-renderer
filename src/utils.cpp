@@ -46,7 +46,7 @@ VkFormat FindDepthFormat( VkPhysicalDevice physical )
  * Queue
  */
 
-bool QueueFamilyIndices::isComplete(  )
+bool QueueFamilyIndices::isComplete()
 {
     return this->graphicsFamily >= 0 && this->presentFamily >= 0;
 }

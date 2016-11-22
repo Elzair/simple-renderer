@@ -14,7 +14,7 @@
  * Vertex Methods
  */
 
-VkVertexInputBindingDescription Vertex::getBindingDescription(  )
+VkVertexInputBindingDescription Vertex::getBindingDescription()
 {
     VkVertexInputBindingDescription bindingDescription = {};
     bindingDescription.binding   = 0;
@@ -24,7 +24,7 @@ VkVertexInputBindingDescription Vertex::getBindingDescription(  )
     return bindingDescription;
 }
 
-std::array<VkVertexInputAttributeDescription, 3> Vertex::getAttributeDescriptions(  )
+std::array<VkVertexInputAttributeDescription, 3> Vertex::getAttributeDescriptions()
 {
     std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = {};
 
@@ -56,26 +56,6 @@ bool Vertex::operator==( const Vertex& other ) const
 /*
  * Model Methods
  */
-
-Model::Model( VkPhysicalDevice physical,
-              VkDevice         device,
-              VkQueue          queue,
-              VkCommandPool    commandPool,
-              std::string      fileName )
-{
-    this->init( physical,
-                device,
-                queue,
-                commandPool,
-                fileName );
-}
-
-Model::Model(  ) { }
-
-Model::~Model(  )
-{
-    this->deinit();
-}
 
 void Model::init( VkPhysicalDevice physical,
                   VkDevice         device,

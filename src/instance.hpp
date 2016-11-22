@@ -18,11 +18,20 @@ public:
               const std::vector<const char*> validationLayers,
               uint32_t                       applicationVersion = 1,
               uint32_t                       engineVersion      = 1,
-              uint32_t                       apiVersion         = VK_API_VERSION_1_0 );
+              uint32_t                       apiVersion         = VK_API_VERSION_1_0 )
+    {
+        this->init( applicationName,
+                    engineName,
+                    extensions,
+                    validationLayers,
+                    applicationVersion,
+                    engineVersion,
+                    apiVersion );
+    }
     
-    Instance(  );
+    Instance() {}
 
-    ~Instance(  );
+    ~Instance() { this->deinit(); }
 
     void init( const std::string              applicationName,
                const std::string              engineName,
@@ -32,7 +41,7 @@ public:
                uint32_t                       engineVersion = 1,
                uint32_t                       apiVersion = VK_API_VERSION_1_0 );
 
-    void deinit(  );
+    void deinit();
 };
 
 #endif

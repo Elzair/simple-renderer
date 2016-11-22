@@ -19,18 +19,21 @@ public:
     Device( VkPhysicalDevice               physical,
             VkSurfaceKHR                   surface,
             const std::vector<const char*> extensions,
-            const std::vector<const char*> validationLayers );
+            const std::vector<const char*> validationLayers )
+    {
+        this->init( physical, surface, extensions, validationLayers );
+    }
 
-    Device(  );
+    Device() {}
 
-    ~Device(  );
+    ~Device() { this->deinit(); }
 
     void init( VkPhysicalDevice               physical,
                VkSurfaceKHR                   surface,
                const std::vector<const char*> extensions,
                const std::vector<const char*> validationLayers );
 
-    void deinit(  );
+    void deinit();
 };
 
 #endif

@@ -20,24 +20,27 @@ public:
     CommandBuffer( VkDevice        device,
                    VkQueue         queue,
                    VkCommandPool   pool,
-                   VkCommandBuffer cmdbuff = VK_NULL_HANDLE );
+                   VkCommandBuffer cmdbuff = VK_NULL_HANDLE )
+    {
+        this->init( device, queue, pool, cmdbuff );
+    }
 
-    CommandBuffer(  );
+    CommandBuffer() {}
 
-    ~CommandBuffer(  );
+    ~CommandBuffer() { this->deinit(); }
 
     void init( VkDevice        device,
                VkQueue         queue,
                VkCommandPool   pool,
                VkCommandBuffer cmdbuff = VK_NULL_HANDLE );
 
-    void deinit(  );
+    void deinit();
 
     void begin( CommandBufferUsage usage = CommandBufferUsage::SIMULTANEOUS_USE );
 
-    void end(  );
+    void end();
 
-    void submit(  );
+    void submit();
 
 private:
 

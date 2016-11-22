@@ -2,36 +2,6 @@
 #include "common.hpp"
 #include "image.hpp"
 
-Image::Image( VkPhysicalDevice physical,
-              VkDevice         device,
-              VkQueue          queue,
-              VkCommandPool    commandPool,
-              uint32_t         width,
-              uint32_t         height,
-              VkFormat         format,
-              ImageType        type,
-              void*            data,
-              VkDeviceSize     dataSize )
-{
-    this->init( physical,
-                device,
-                queue,
-                commandPool,
-                width,
-                height,
-                format,
-                type,
-                data,
-                dataSize );
-}
-
-Image::Image(  ) { }
-
-Image::~Image(  )
-{
-    this->deinit();
-}
-
 void Image::init( VkPhysicalDevice physical,
                   VkDevice         device,
                   VkQueue          queue,

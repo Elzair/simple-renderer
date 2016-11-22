@@ -17,11 +17,14 @@ public:
              VkDevice         device,
              VkQueue          queue,
              VkCommandPool    commandPool,
-             std::string      fileName );
+             std::string      fileName )
+    {
+        this->init( physical, device, queue, commandPool, fileName );
+    }
 
-    Texture(  );
+    Texture() {}
 
-    ~Texture(  );
+    ~Texture() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
                VkDevice         device,
@@ -29,11 +32,11 @@ public:
                VkCommandPool    commandPool,
                std::string      fileName );
 
-    void deinit(  );
+    void deinit();
 
 private:
     
-    void createSampler(  );
+    void createSampler();
 };
 
 #endif

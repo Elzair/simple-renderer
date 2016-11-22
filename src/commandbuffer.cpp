@@ -1,21 +1,6 @@
 #include "common.hpp"
 #include "commandbuffer.hpp"
 
-CommandBuffer::CommandBuffer( VkDevice        device,
-                              VkQueue         queue,
-                              VkCommandPool   pool,
-                              VkCommandBuffer cmdbuff )
-{
-    this->init( device, queue, pool, cmdbuff );
-}
-
-CommandBuffer::CommandBuffer(  ) { }
-
-CommandBuffer::~CommandBuffer(  )
-{
-    this->deinit();
-}
-
 void CommandBuffer::init( VkDevice        device,
                           VkQueue         queue,
                           VkCommandPool   pool,

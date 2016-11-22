@@ -27,11 +27,14 @@ public:
                VkSurfaceKHR          surface,
                int                   width,
                int                   height,
-               std::vector<uint32_t> familyIndices );
+               std::vector<uint32_t> familyIndices )
+    {
+        this->init( physical, device, surface, width, height, familyIndices );
+    }
 
-    SwapChain(  );
+    SwapChain() {}
 
-    ~SwapChain(  );
+    ~SwapChain() { this->deinit( true ); }
 
     void init( VkPhysicalDevice      physical,
                VkDevice              device,

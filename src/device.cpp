@@ -3,21 +3,6 @@
 #include "utils.hpp"
 #include "device.hpp"
 
-Device::Device( VkPhysicalDevice               physical,
-                VkSurfaceKHR                   surface,
-                const std::vector<const char*> extensions,
-                const std::vector<const char*> validationLayers )
-{
-    this->init( physical, surface, extensions, validationLayers );
-}
-
-Device::Device(  ) { }
-
-Device::~Device(  )
-{
-    this->deinit();
-}
-
 void Device::init( VkPhysicalDevice               physical,
                    VkSurfaceKHR                   surface,
                    const std::vector<const char*> extensions,
@@ -78,7 +63,7 @@ void Device::init( VkPhysicalDevice               physical,
                       0, &this->presentQueue );
 }
 
-void Device::deinit(  )
+void Device::deinit()
 {
     if ( this->id != VK_NULL_HANDLE )
     {

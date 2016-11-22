@@ -1,24 +1,6 @@
 #include "common.hpp"
 
 #include "swapchain.hpp"
-    
-SwapChain::SwapChain( VkPhysicalDevice      physical,
-                      VkDevice              device,
-                      VkSurfaceKHR          surface,
-                      int                   width,
-                      int                   height,
-                      std::vector<uint32_t> familyIndices)
-{
-    this->init( physical, device, surface,
-                width, height, familyIndices );
-}
-
-SwapChain::SwapChain(  ) { }
-
-SwapChain::~SwapChain(  )
-{
-    this->deinit();
-}
 
 void SwapChain::init( VkPhysicalDevice      physical,
                       VkDevice              device,
@@ -170,7 +152,6 @@ void SwapChain::createFramebuffers( VkRenderPass renderPass,
                                               &this->framebuffers[i] ) );
     }
 }
-
 
 VkSurfaceFormatKHR SwapChain::chooseSurfaceFormat(
     const std::vector<VkSurfaceFormatKHR>& availableFormats

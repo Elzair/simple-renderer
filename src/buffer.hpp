@@ -24,11 +24,14 @@ public:
             VkQueue          queue,
             VkCommandPool    commandPool,
             VkDeviceSize     size,
-            BufferUsage      usage );
+            BufferUsage      usage )
+    {
+        this->init( physical, device, queue, commandPool, size, usage );
+    }
 
-    Buffer(  );
+    Buffer() {}
 
-    ~Buffer(  );
+    ~Buffer() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
                VkDevice         device,
@@ -37,7 +40,7 @@ public:
                VkDeviceSize     size,
                BufferUsage      usage );
 
-    void deinit(  );
+    void deinit();
 
     void copy( void*  data     = nullptr,
                bool   toDevice = true,

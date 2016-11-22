@@ -27,9 +27,9 @@ struct Vertex
     glm::vec3 color;
     glm::vec2 texCoord;
 
-    static VkVertexInputBindingDescription getBindingDescription(  );
+    static VkVertexInputBindingDescription getBindingDescription();
 
-    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions(  );
+    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions();
 
     bool operator==( const Vertex& other ) const;
 };
@@ -63,11 +63,14 @@ public:
            VkDevice         device,
            VkQueue          queue,
            VkCommandPool    commandPool,
-           std::string      fileName );
+           std::string      fileName )
+    {
+        this->init( physical, device, queue, commandPool, fileName );
+    }
 
-    Model(  );
+    Model() {}
 
-    ~Model(  );
+    ~Model() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
                VkDevice         device,
@@ -75,7 +78,7 @@ public:
                VkCommandPool    commandPool,
                std::string      fileName );
 
-    void deinit(  );
+    void deinit();
 };
 
 #endif

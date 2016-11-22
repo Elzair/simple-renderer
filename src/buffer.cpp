@@ -2,28 +2,6 @@
 #include "common.hpp"
 #include "buffer.hpp"
 
-Buffer::Buffer( VkPhysicalDevice physical,
-                VkDevice         device,
-                VkQueue          queue,
-                VkCommandPool    commandPool,
-                VkDeviceSize     size,
-                BufferUsage      usage )
-{
-    this->init( physical,
-                device,
-                queue,
-                commandPool,
-                size,
-                usage );
-}
-
-Buffer::Buffer(  ) { }
-
-Buffer::~Buffer(  )
-{
-    this->deinit();
-}
-
 void Buffer::init( VkPhysicalDevice physical,
                    VkDevice         device,
                    VkQueue          queue,

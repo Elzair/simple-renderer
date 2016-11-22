@@ -29,11 +29,15 @@ public:
            VkFormat         format,
            ImageType        type,
            void*            data     = nullptr,
-           VkDeviceSize     dataSize = 0 );
+           VkDeviceSize     dataSize = 0 )
+    {
+        this->init( physical, device, queue, commandPool, width,
+                    height, format, type, data, dataSize );
+    }
 
-    Image(  );
+    Image() {}
 
-    ~Image(  );
+    ~Image() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
                VkDevice         device,
