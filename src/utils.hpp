@@ -1,10 +1,18 @@
 #ifndef __UTILS_HPP__
 #define __UTILS_HPP__
 
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
+/*
+ * File IO
+ */
+
+std::vector<uint8_t> ReadFile( const std::string& filename );
 
 /*
  * Formats

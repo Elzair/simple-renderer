@@ -1,6 +1,28 @@
 #include <cstring>
+#include <fstream>
 #include "common.hpp"
 #include "utils.hpp"
+
+/*
+ * File IO
+ */
+
+std::vector<uint8_t> ReadFile( const std::string& filename )
+{
+    std::ifstream file( filename, std::ios::ate | std::ios::binary );
+
+    assert( file.is_open() );
+
+    std::size_t fileSize = (std::size_t) file.tellg();
+    std::vector<uint8_t> buffer( fileSize );
+
+    file.seekg( 0 );
+    file.read( reinterpret_cast<char*>(buffer.data()), fileSize );
+    file.close();
+
+    return buffer;
+
+}
 
 /*
  * Formats

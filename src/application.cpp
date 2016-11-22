@@ -385,31 +385,9 @@ void VulkanApplication::createDescriptorSetLayout(  )
 
 void VulkanApplication::createGraphicsPipeline(  )
 {
-    auto vertexShaderCode   = readFile( "shaders/vert.spv" );
-    auto fragmentShaderCode = readFile( "shaders/frag.spv" );
-
-    // Create shader modules
-    VkShaderModule vertexShader   = createShaderModule( this->device.id,
-                                                        vertexShaderCode );
-    VkShaderModule fragmentShader = createShaderModule( this->device.id,
-                                                        fragmentShaderCode );
-
-    // Add to graphics pipeline
-    VkPipelineShaderStageCreateInfo vertexShaderStageInfo = {};
-    vertexShaderStageInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    vertexShaderStageInfo.stage  = VK_SHADER_STAGE_VERTEX_BIT;
-    vertexShaderStageInfo.module = vertexShader;
-    vertexShaderStageInfo.pName  = "main";
-    VkPipelineShaderStageCreateInfo fragmentShaderStageInfo = {};
-    fragmentShaderStageInfo.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    fragmentShaderStageInfo.stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
-    fragmentShaderStageInfo.module = fragmentShader;
-    fragmentShaderStageInfo.pName  = "main";
-
-    VkPipelineShaderStageCreateInfo shaderStages[] = {
-        vertexShaderStageInfo,
-        fragmentShaderStageInfo
-    };
+    auto vs_code = ReadFile( "shaders/vert.spv" );
+    auto fs_code = ReadFile( "shaders/frag.spv" );
+    GraphicsShader shader( this->device.id, vs_code, fs_code, {}, {}, {} );
 
     // Describe the format of the input vertex data
     auto bindingDescription    = Vertex::getBindingDescription();
@@ -527,8 +505,10 @@ void VulkanApplication::createGraphicsPipeline(  )
     // Create Graphics Pipeline
     VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
     pipelineCreateInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineCreateInfo.stageCount          = 2;
-    pipelineCreateInfo.pStages             = shaderStages;
+    //pipelineCreateInfo.stageCount          = 2;
+    //pipelineCreateInfo.pStages             = shaderStages;
+    pipelineCreateInfo.stageCount          = shader.num_modules;
+    pipelineCreateInfo.pStages             = &shader.pipeline_info[ 0 ];
     pipelineCreateInfo.pVertexInputState   = &vertexInputCreateInfo;
     pipelineCreateInfo.pInputAssemblyState = &inputAssemblyCreateInfo;
     pipelineCreateInfo.pViewportState      = &viewportStateCreateInfo;
@@ -549,9 +529,6 @@ void VulkanApplication::createGraphicsPipeline(  )
                                                 &pipelineCreateInfo,
                                                 nullptr,
                                                 &this->graphicsPipeline ) );
-
-    vkDestroyShaderModule( this->device.id, fragmentShader, nullptr );
-    vkDestroyShaderModule( this->device.id, vertexShader, nullptr );
 }
 
 void VulkanApplication::createCommandPool(  )
