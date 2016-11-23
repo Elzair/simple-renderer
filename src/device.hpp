@@ -39,7 +39,6 @@ public:
 
     // Device
     VkResult waitIdle();
-    void destroy();
 
     // Queues
     void getDeviceQueue( uint32_t queueFamilyIndex,
@@ -52,10 +51,8 @@ public:
                                 VkCommandPool*                 pCommandPool );
     VkResult resetCommandPool( VkCommandPool           commandPool,
                                VkCommandPoolResetFlags flags );
-    VkResult destroyCommandPool( VkCommandPool commandPool );
+    void destroyCommandPool( VkCommandPool commandPool );
     VkResult allocateCommandBuffers( VkCommandBuffer* pCommandBuffers );
-    VkResult resetCommandBuffer( VkCommandBuffer           commandBuffer,
-                                 VkCommandBufferResetFlags flags );
     void freeCommandBuffers( VkCommandPool          commandPool,
                              uint32_t               commandBufferCount,
                              const VkCommandBuffer* pCommandBuffers );
@@ -85,10 +82,10 @@ public:
                                      uint32_t                           createInfoCount,
                                      const VkComputePipelineCreateInfo* pCreateInfos,
                                      VkPipeline*                        pPipelines );
-    VkResult createGraphicsPipelines( VkPipelineCache                    pipelineCache,
-                                      uint32_t                           createInfoCount,
-                                      const VkComputePipelineCreateInfo* pCreateInfos,
-                                      VkPipeline*                        pPipelines );
+    VkResult createGraphicsPipelines( VkPipelineCache                     pipelineCache,
+                                      uint32_t                            createInfoCount,
+                                      const VkGraphicsPipelineCreateInfo* pCreateInfos,
+                                      VkPipeline*                         pPipelines );
     void destroyPipeline( VkPipeline pipeline );
     VkResult createPipelineCache( const VkPipelineCacheCreateInfo* pCreateInfo,
                                   VkPipelineCache*                 pPipelineCache );
@@ -111,8 +108,8 @@ public:
                         void**           ppData ); 
     VkResult flushMappedMemoryRanges( uint32_t                   memoryRangeCount,
                                       const VkMappedMemoryRange* pMemoryRanges );
-    VkResult invalidateMappedMemoryRanges( uint32_t memoryRangeCount,
-                                           const VkMappedMemoryRange* pMemoryRange );
+    VkResult invalidateMappedMemoryRanges( uint32_t                   memoryRangeCount,
+                                           const VkMappedMemoryRange* pMemoryRanges );
     void unmapMemory( VkDeviceMemory memory );
     void getDeviceMemoryCommitment( VkDeviceMemory memory,
                                     VkDeviceSize*  pCommittedMemoryInBytes );
@@ -129,7 +126,7 @@ public:
     void getImageSubresourceLayout( VkImage                   image,
                                     const VkImageSubresource* pSubResource,
                                     VkSubresourceLayout*      pLayout );
-    void vkDestroyImage( VkImage image );
+    void destroyImage( VkImage image );
     VkResult createImageView( const VkImageViewCreateInfo* pCreateInfo,
                               VkImageView*                 pView );
     void destroyImageView( VkImageView imageView );
@@ -140,7 +137,7 @@ public:
     VkResult bindBufferMemory( VkBuffer       buffer,
                                VkDeviceMemory memory,
                                VkDeviceSize   memoryOffset );
-    VkResult bindImageMemory( VkImage         buffer,
+    VkResult bindImageMemory( VkImage         image,
                                VkDeviceMemory memory,
                                VkDeviceSize   memoryOffset );
 
@@ -166,8 +163,8 @@ public:
                                  const VkDescriptorSet* pDescriptorSets );
     VkResult resetDescriptorPool( VkDescriptorPool           descriptorPool,
                                   VkDescriptorPoolResetFlags flags );
-    void vkUpdateDescriptorSets( uint32_t                    descriptorWriteCount,
-                                 const VkWriteDescriptorSet* pDescriptorWrites,
-                                 uint32_t                    descriptorCopyCount,
-                                 const VkCopyDescriptorSet*  pDescriptorCopies );
+    void updateDescriptorSets( uint32_t                    descriptorWriteCount,
+                               const VkWriteDescriptorSet* pDescriptorWrites,
+                               uint32_t                    descriptorCopyCount,
+                               const VkCopyDescriptorSet*  pDescriptorCopies );
 };
