@@ -4,6 +4,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include "device.hpp"
 #include "image.hpp"
 
 class Texture : public Image
@@ -13,7 +14,7 @@ public:
     VkSampler sampler = VK_NULL_HANDLE;
 
     Texture( VkPhysicalDevice physical,
-             VkDevice         device,
+             Device*          device,
              VkQueue          queue,
              VkCommandPool    commandPool,
              std::string      fileName )
@@ -26,7 +27,7 @@ public:
     ~Texture() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
-               VkDevice         device,
+               Device*          device,
                VkQueue          queue,
                VkCommandPool    commandPool,
                std::string      fileName );

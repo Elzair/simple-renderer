@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 
 #include "utils.hpp"
+#include "device.hpp"
 #include "commandbuffer.hpp"
 
 enum ImageType {
@@ -19,7 +20,7 @@ public:
     VkImageView    view   = VK_NULL_HANDLE;
 
     Image( VkPhysicalDevice physical,
-           VkDevice         device,
+           Device*          device,
            VkQueue          queue,
            VkCommandPool    commandPool,
            uint32_t         width,
@@ -38,7 +39,7 @@ public:
     ~Image() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
-               VkDevice         device,
+               Device*          device,
                VkQueue          queue,
                VkCommandPool    commandPool,
                uint32_t         width,
@@ -52,7 +53,7 @@ public:
 
 protected:
 
-    VkDevice       device      = VK_NULL_HANDLE;
+    Device*        device;
     VkQueue        queue       = VK_NULL_HANDLE;
     VkCommandPool  commandPool = VK_NULL_HANDLE;
     uint32_t       width;

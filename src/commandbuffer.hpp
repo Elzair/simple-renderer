@@ -3,6 +3,8 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "device.hpp"
+
 enum class CommandBufferUsage
 {
     ONE_TIME,
@@ -15,7 +17,7 @@ public:
     
     VkCommandBuffer id;
 
-    CommandBuffer( VkDevice        device,
+    CommandBuffer( Device*         device,
                    VkQueue         queue,
                    VkCommandPool   pool,
                    VkCommandBuffer cmdbuff = VK_NULL_HANDLE )
@@ -27,7 +29,7 @@ public:
 
     ~CommandBuffer() { this->deinit(); }
 
-    void init( VkDevice        device,
+    void init( Device*         device,
                VkQueue         queue,
                VkCommandPool   pool,
                VkCommandBuffer cmdbuff = VK_NULL_HANDLE );
@@ -42,7 +44,7 @@ public:
 
 private:
 
-    VkDevice        device      = VK_NULL_HANDLE;
+    Device*         device;
     VkQueue         queue       = VK_NULL_HANDLE;
     VkCommandPool   pool        = VK_NULL_HANDLE;
     bool            initialized = false;
@@ -55,29 +57,29 @@ class CommandBuffers
 {
 public:
 
-    CommandBuffers( VkDevice           device,
+    CommandBuffers( Device*            device,
                     VkQueue            queue,
                     VkCommandPool      pool,
                     CommandBufferUsage usage,
                     std::size_t        size );
 
-    CommandBuffers(  );
+    CommandBuffers();
 
-    ~CommandBuffers(  );
+    ~CommandBuffers();
 
-    void init( VkDevice      device,
+    void init( Device*       device,
                VkQueue       queue,
                VkCommandPool pool,
                std::size_t   size );
 
-    void deinit(  );
+    void deinit();
 
-    void refresh( VkDevice      device,
+    void refresh( Device*       device,
                   VkQueue       queue,
                   VkCommandPool pool,
                   std::size_t   size );
 
-    std::size_t size(  );
+    std::size_t size();
 
     CommandBuffer& operator[] ( std::size_t idx );
 
@@ -87,7 +89,7 @@ private:
     
     std::vector<CommandBuffer>   buffers;
     std::vector<VkCommandBuffer> buffpriv;
-    VkDevice                     device = VK_NULL_HANDLE;
+    Device*                      device;
     VkQueue                      queue  = VK_NULL_HANDLE;
     VkCommandPool                pool   = VK_NULL_HANDLE;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "commandbuffer.hpp"
+#include "device.hpp"
 #include "utils.hpp"
 
 enum BufferUsage
@@ -18,7 +19,7 @@ public:
     VkDeviceMemory memory;
 
     Buffer( VkPhysicalDevice physical,
-            VkDevice         device,
+            Device*          device,
             VkQueue          queue,
             VkCommandPool    commandPool,
             VkDeviceSize     size,
@@ -32,7 +33,7 @@ public:
     ~Buffer() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
-               VkDevice         device,
+               Device*          device,
                VkQueue          queue,
                VkCommandPool    commandPool,
                VkDeviceSize     size,
@@ -48,7 +49,8 @@ private:
 
     VkBuffer         staging       = VK_NULL_HANDLE;
     VkDeviceMemory   stagingMemory = VK_NULL_HANDLE;
-    VkDevice         device        = VK_NULL_HANDLE;
+    Device*          device;
+
     VkPhysicalDevice physical      = VK_NULL_HANDLE;
     VkQueue          queue         = VK_NULL_HANDLE;
     VkCommandPool    commandPool   = VK_NULL_HANDLE;

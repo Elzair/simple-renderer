@@ -3,7 +3,7 @@
 #include "buffer.hpp"
 
 void Buffer::init( VkPhysicalDevice physical,
-                   VkDevice         device,
+                   Device*          device,
                    VkQueue          queue,
                    VkCommandPool    commandPool,
                    VkDeviceSize     size,
@@ -51,19 +51,19 @@ void Buffer::deinit(  )
 {
     if ( this->memory != VK_NULL_HANDLE )
     {
-        vkFreeMemory( this->device, this->memory, nullptr );
+        this->device->freeMemory( this->memory );
     }
     if ( this->id != VK_NULL_HANDLE )
     {
-        vkDestroyBuffer( this->device, this->id, nullptr );
+        this->device->destroyBuffer( this->id );
     }
     if ( this->stagingMemory != VK_NULL_HANDLE )
     {
-        vkFreeMemory( this->device, this->stagingMemory, nullptr );
+        this->device->freeMemory( this->stagingMemory );
     }
     if ( this->staging != VK_NULL_HANDLE )
     {
-        vkDestroyBuffer( this->device, this->staging, nullptr );
+        this->device->destroyBuffer( this->staging );
     }
 }
 
@@ -80,14 +80,13 @@ void Buffer::copy( void*       data,
         void*        mem  = nullptr;
         VkDeviceSize size = (VkDeviceSize)this->size;
             
-        vkMapMemory( this->device,
-                     this->stagingMemory,
-                     0,
-                     size,
-                     0,
-                     &mem );
+        this->device->mapMemory( this->stagingMemory,
+                                 0,
+                                 size,
+                                 0,
+                                 &mem );
         std::memcpy( mem, data, size );
-        vkUnmapMemory( this->device, this->stagingMemory );
+        this->device->unmapMemory( this->stagingMemory );
     }
 
     if ( toDevice )
@@ -121,10 +120,8 @@ VkBuffer Buffer::createBuffer( VkBufferUsageFlags usage )
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VkBuffer buffer = VK_NULL_HANDLE;
-    VK_CHECK_RESULT( vkCreateBuffer( this->device,
-                                     &bufferInfo,
-                                     nullptr,
-                                     &buffer ) );
+    VK_CHECK_RESULT( this->device->createBuffer( &bufferInfo,
+                                                 &buffer ) );
 
     return buffer;
 }
@@ -133,9 +130,8 @@ VkDeviceMemory Buffer::allocateMemory( VkBuffer              buffer,
                                        VkMemoryPropertyFlags props )
 {
     VkMemoryRequirements memreqs;
-    vkGetBufferMemoryRequirements( this->device,
-                                   buffer,
-                                   &memreqs );
+    this->device->getBufferMemoryRequirements( buffer,
+                                               &memreqs );
 
     VkMemoryAllocateInfo allocInfo = {};
     allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -145,12 +141,10 @@ VkDeviceMemory Buffer::allocateMemory( VkBuffer              buffer,
                                                 props );
 
     VkDeviceMemory memory2 = VK_NULL_HANDLE;
-    VK_CHECK_RESULT( vkAllocateMemory( this->device,
-                                       &allocInfo,
-                                       nullptr,
-                                       &memory2 ) );
+    VK_CHECK_RESULT( this->device->allocateMemory( &allocInfo,
+                                                   &memory2 ) );
 
-    vkBindBufferMemory( this->device, buffer, memory2, 0 );
+    this->device->bindBufferMemory( buffer, memory2, 0 );
 
     return memory2;
 }

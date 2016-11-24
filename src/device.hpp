@@ -52,7 +52,8 @@ public:
     VkResult resetCommandPool( VkCommandPool           commandPool,
                                VkCommandPoolResetFlags flags );
     void destroyCommandPool( VkCommandPool commandPool );
-    VkResult allocateCommandBuffers( VkCommandBuffer* pCommandBuffers );
+    VkResult allocateCommandBuffers( const VkCommandBufferAllocateInfo* pAllocateInfo,
+                                     VkCommandBuffer*                   pCommandBuffers );
     void freeCommandBuffers( VkCommandPool          commandPool,
                              uint32_t               commandBufferCount,
                              const VkCommandBuffer* pCommandBuffers );

@@ -13,6 +13,7 @@
 #define GLM_HAS_CXX11_STL 1
 #include <glm/gtx/hash.hpp>
 
+#include "device.hpp"
 #include "buffer.hpp"
 
 /*
@@ -58,7 +59,7 @@ public:
     std::size_t indexSize;
 
     Model( VkPhysicalDevice physical,
-           VkDevice         device,
+           Device*          device,
            VkQueue          queue,
            VkCommandPool    commandPool,
            std::string      fileName )
@@ -71,7 +72,7 @@ public:
     ~Model() { this->deinit(); }
 
     void init( VkPhysicalDevice physical,
-               VkDevice         device,
+               Device*          device,
                VkQueue          queue,
                VkCommandPool    commandPool,
                std::string      fileName );

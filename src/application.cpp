@@ -99,7 +99,7 @@ void VulkanApplication::initVulkan( int width, int height )
     std::cout << "Created Command Pool!" << std::endl;
         
     this->depth.init( this->physical,
-                      this->device.id,
+                      &this->device,
                       this->device.graphicsQueue,
                       this->commandPool,
                       this->swapchain.extent.width,
@@ -114,21 +114,21 @@ void VulkanApplication::initVulkan( int width, int height )
     std::cout << "Created Framebuffer!" << std::endl;
 
     this->texture.init( this->physical,
-                        this->device.id,
+                        &this->device,
                         this->device.graphicsQueue,
                         this->commandPool,
                         TEXTURE_PATH );
     std::cout << "Created Texture!" << std::endl;
 
     this->model.init( this->physical,
-                      this->device.id,
+                      &this->device,
                       this->device.graphicsQueue,
                       this->commandPool,
                       MODEL_PATH );
     std::cout << "Loaded model!" << std::endl;
 
     this->uniform.init( this->physical,
-                        this->device.id,
+                        &this->device,
                         this->device.graphicsQueue,
                         this->commandPool,
                         sizeof(UniformBufferObject),
@@ -176,7 +176,7 @@ void VulkanApplication::recreateSwapChain( int width, int height )
     this->createGraphicsPipeline();
 
     this->depth.init( this->physical,
-                      this->device.id,
+                      &this->device,
                       this->device.graphicsQueue,
                       this->commandPool,
                       this->swapchain.extent.width,
@@ -617,7 +617,7 @@ void VulkanApplication::createDescriptorSet()
 void VulkanApplication::createCommandBuffers()
 {
     // Free old command buffers (if called from recreateSwapChain())
-    this->commandBuffers.refresh( this->device.id,
+    this->commandBuffers.refresh( &this->device,
                                   this->device.graphicsQueue,
                                   this->commandPool,
                                   this->swapchain.framebuffers.size() );

@@ -58,7 +58,7 @@ bool Vertex::operator==( const Vertex& other ) const
  */
 
 void Model::init( VkPhysicalDevice physical,
-                  VkDevice         device,
+                  Device*          device,
                   VkQueue          queue,
                   VkCommandPool    commandPool,
                   std::string      fileName )

@@ -1,7 +1,7 @@
 #include "common.hpp"
 #include "commandbuffer.hpp"
 
-void CommandBuffer::init( VkDevice        device,
+void CommandBuffer::init( Device*         device,
                           VkQueue         queue,
                           VkCommandPool   pool,
                           VkCommandBuffer cmdbuff )
@@ -23,7 +23,7 @@ void CommandBuffer::init( VkDevice        device,
         allocInfo.commandBufferCount = 1;
 
         VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers( this->device, &allocInfo, &this->id );
+        this->device->allocateCommandBuffers( &allocInfo, &this->id );
 
         this->remoteAlloc = false;
     }
@@ -47,7 +47,7 @@ void CommandBuffer::deinit(  )
     {
         vkQueueWaitIdle( this->queue );
 
-        vkFreeCommandBuffers( this->device, this->pool, 1, &this->id );
+        this->device->freeCommandBuffers( this->pool, 1, &this->id );
     }
 
     this->initialized = false;
@@ -77,7 +77,7 @@ void CommandBuffer::begin( CommandBufferUsage usage )
     this->began = true;
 }
 
-void CommandBuffer::end(  )
+void CommandBuffer::end()
 {
     assert( this->initialized && this->began );
 
@@ -108,7 +108,7 @@ void CommandBuffer::submit(  )
     vkQueueSubmit( this->queue, 1, &submitInfo, VK_NULL_HANDLE );
 }
 
-CommandBuffers::CommandBuffers( VkDevice           device,
+CommandBuffers::CommandBuffers( Device*            device,
                                 VkQueue            queue,
                                 VkCommandPool      pool,
                                 CommandBufferUsage usage,
@@ -124,7 +124,7 @@ CommandBuffers::~CommandBuffers(  )
     this->deinit();
 }
 
-void CommandBuffers::init( VkDevice      device,
+void CommandBuffers::init( Device*       device,
                            VkQueue       queue,
                            VkCommandPool pool,
                            std::size_t   size )
@@ -143,9 +143,8 @@ void CommandBuffers::init( VkDevice      device,
     allocateInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocateInfo.commandBufferCount = (uint32_t)this->buffpriv.size();
 
-    VK_CHECK_RESULT( vkAllocateCommandBuffers( this->device,
-                                               &allocateInfo,
-                                               this->buffpriv.data() ) );
+    VK_CHECK_RESULT( this->device->allocateCommandBuffers( &allocateInfo,
+                                                           this->buffpriv.data() ) );
 
     for ( std::size_t i = 0; i < this->buffers.size(); i++ )
     {
@@ -160,15 +159,14 @@ void CommandBuffers::deinit(  )
 {
     if ( this->buffers.size() > 0 )
     {
-        vkFreeCommandBuffers( this->device,
-                              this->pool,
-                              this->buffpriv.size(),
-                              this->buffpriv.data() );
+        this->device->freeCommandBuffers( this->pool,
+                                          this->buffpriv.size(),
+                                          this->buffpriv.data() );
         this->buffers.clear();
     }
 }
 
-void CommandBuffers::refresh( VkDevice      device,
+void CommandBuffers::refresh( Device*       device,
                               VkQueue       queue,
                               VkCommandPool pool,
                               std::size_t   size )
@@ -177,7 +175,7 @@ void CommandBuffers::refresh( VkDevice      device,
     this->init( device, queue, pool, size );
 }
 
-std::size_t CommandBuffers::size(  )
+std::size_t CommandBuffers::size()
 {
     return this->buffers.size();
 }

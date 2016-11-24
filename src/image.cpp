@@ -1,9 +1,10 @@
 #include <cstring>
 #include "common.hpp"
+#include "device.hpp"
 #include "image.hpp"
 
 void Image::init( VkPhysicalDevice physical,
-                  VkDevice         device,
+                  Device*          device,
                   VkQueue          queue,
                   VkCommandPool    commandPool,
                   uint32_t         width,
@@ -56,15 +57,12 @@ void Image::init( VkPhysicalDevice physical,
     imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
     imageInfo.initialLayout = initialLayout;
 
-    VK_CHECK_RESULT( vkCreateImage( this->device,
-                                    &imageInfo,
-                                    nullptr,
-                                    &this->id ) );
+    VK_CHECK_RESULT( this->device->createImage( &imageInfo,
+                                                &this->id ) );
 
     VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements( this->device,
-                                  this->id,
-                                  &memRequirements );
+    this->device->getImageMemoryRequirements( this->id,
+                                              &memRequirements );
 
     VkMemoryAllocateInfo allocInfo = {};
     allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -73,12 +71,10 @@ void Image::init( VkPhysicalDevice physical,
                                                 memRequirements.memoryTypeBits,
                                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT );
     
-    VK_CHECK_RESULT( vkAllocateMemory( this->device,
-                                       &allocInfo,
-                                       nullptr,
-                                       &this->memory ) );
+    VK_CHECK_RESULT( this->device->allocateMemory( &allocInfo,
+                                                   &this->memory ) );
 
-    vkBindImageMemory( this->device, this->id, this->memory, 0 );
+    this->device->bindImageMemory( this->id, this->memory, 0 );
 
     if ( this->type == ImageType::COLOR )
     {
@@ -100,15 +96,12 @@ void Image::init( VkPhysicalDevice physical,
         stagingInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
         stagingInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 
-        VK_CHECK_RESULT( vkCreateImage( this->device,
-                                        &stagingInfo,
-                                        nullptr ,
-                                        &staging ) );
+        VK_CHECK_RESULT( this->device->createImage( &stagingInfo,
+                                                    &staging ) );
             
         VkMemoryRequirements stagingMemReqs;
-        vkGetImageMemoryRequirements( this->device,
-                                      staging,
-                                      &stagingMemReqs );
+        this->device->getImageMemoryRequirements( staging,
+                                                  &stagingMemReqs );
 
         VkMemoryAllocateInfo saInfo = {};
         saInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -118,19 +111,17 @@ void Image::init( VkPhysicalDevice physical,
                                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                                                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT );
 
-        VK_CHECK_RESULT( vkAllocateMemory( this->device,
-                                           &saInfo,
-                                           nullptr,
-                                           &stagingMemory ) );
+        VK_CHECK_RESULT( this->device->allocateMemory( &saInfo,
+                                                       &stagingMemory ) );
 
-        vkBindImageMemory( this->device, staging, stagingMemory, 0 );
+        this->device->bindImageMemory( staging, stagingMemory, 0 );
 
         // Copy pixel data to staging area
         void* stagingData;
-        vkMapMemory( this->device, stagingMemory, 0,
-                     dataSize, 0, &stagingData );
+        this->device->mapMemory( stagingMemory, 0,
+                                 dataSize, 0, &stagingData );
         std::memcpy( stagingData, data, (std::size_t)dataSize );
-        vkUnmapMemory( this->device, stagingMemory );
+        this->device->unmapMemory( stagingMemory );
 
         // Optimize image layouts
         this->transitionLayout( staging,
@@ -155,15 +146,15 @@ void Image::deinit(  )
 {
     if ( this->view != VK_NULL_HANDLE )
     {
-        vkDestroyImageView( this->device, this->view, nullptr );
+        this->device->destroyImageView( this->view );
     }
     if ( this->memory != VK_NULL_HANDLE )
     {
-        vkFreeMemory( this->device, this->memory, nullptr );
+        this->device->freeMemory( this->memory );
     }
     if ( this->id != VK_NULL_HANDLE )
     {
-        vkDestroyImage( this->device, this->id, nullptr );
+        this->device->destroyImage( this->id );
     }
 }
 
@@ -180,10 +171,8 @@ void Image::createView( VkImageAspectFlags aspectFlags )
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount     = 1;
 
-    VK_CHECK_RESULT( vkCreateImageView( this->device,
-                                        &viewInfo,
-                                        nullptr,
-                                        &this->view ) );
+    VK_CHECK_RESULT( this->device->createImageView( &viewInfo,
+                                                    &this->view ) );
 }
 
 void Image::transitionLayout( VkImage       image,

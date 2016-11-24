@@ -108,9 +108,10 @@ void Device::destroyCommandPool( VkCommandPool commandPool )
 {
     vkDestroyCommandPool( this->id, commandPool, nullptr );
 }
-VkResult Device::allocateCommandBuffers( VkCommandBuffer* pCommandBuffers )
+VkResult Device::allocateCommandBuffers( const VkCommandBufferAllocateInfo* pAllocateInfo,
+                                         VkCommandBuffer*                   pCommandBuffers )
 {
-    return vkAllocateCommandBuffers( this->id, nullptr, pCommandBuffers );
+    return vkAllocateCommandBuffers( this->id, pAllocateInfo, pCommandBuffers );
 }
 void Device::freeCommandBuffers( VkCommandPool          commandPool,
                                  uint32_t               commandBufferCount,

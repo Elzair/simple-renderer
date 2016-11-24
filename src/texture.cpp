@@ -6,18 +6,18 @@
 #include "texture.hpp"
 
 void Texture::init( VkPhysicalDevice physical,
-                    VkDevice         device,
+                    Device*          device,
                     VkQueue          queue,
                     VkCommandPool    commandPool,
                     std::string      fileName )
 {
     // Load image from file
     int texWidth, texHeight, texChannels;
-    stbi_uc* pixels        = stbi_load( fileName.c_str(),
-                                        &texWidth,
-                                        &texHeight,
-                                        &texChannels,
-                                        STBI_rgb_alpha );
+    stbi_uc* pixels = stbi_load( fileName.c_str(),
+                                 &texWidth,
+                                 &texHeight,
+                                 &texChannels,
+                                 STBI_rgb_alpha );
     assert( pixels );
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
@@ -42,7 +42,7 @@ void Texture::deinit()
 {
     if ( this->sampler != VK_NULL_HANDLE )
     {
-        vkDestroySampler( this->device, this->sampler, nullptr );
+        this->device->destroySampler( this->sampler );
     }
     Image::deinit();
 }
@@ -67,8 +67,6 @@ void Texture::createSampler()
     samplerInfo.minLod                  = 0.0f;
     samplerInfo.maxLod                  = 0.0f;
 
-    VK_CHECK_RESULT( vkCreateSampler( this->device,
-                                      &samplerInfo,
-                                      nullptr,
-                                      &this->sampler ) );
+    VK_CHECK_RESULT( this->device->createSampler( &samplerInfo,
+                                                  &this->sampler ) );
 }
