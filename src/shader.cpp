@@ -8,7 +8,7 @@
 #include "shader.hpp"
 #include "utils.hpp"
 
-void GraphicsShader::init( VkDevice             device,
+void GraphicsShader::init( Device*              device,
                            std::vector<uint8_t> vertex_code,
                            std::vector<uint8_t> fragment_code,
                            std::vector<uint8_t> tessctrl_code,
@@ -36,7 +36,7 @@ void GraphicsShader::deinit()
     {
         if ( this->modules[ i ] != VK_NULL_HANDLE )
         {
-            vkDestroyShaderModule( this->device, this->modules[ i ], nullptr );
+            this->device->destroyShaderModule( this->modules[ i ] );
         }
     }
 }
@@ -52,10 +52,8 @@ void GraphicsShader::createShaderModule(
         info.codeSize = code.size();
         info.pCode    = (uint32_t*)code.data();
 
-        VK_CHECK_RESULT( vkCreateShaderModule(
-                             this->device,
+        VK_CHECK_RESULT( this->device->createShaderModule(
                              &info,
-                             nullptr,
                              &this->modules[ this->num_modules ]
                              ) );
 

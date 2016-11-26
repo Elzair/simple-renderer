@@ -375,3 +375,38 @@ void Device::updateDescriptorSets( uint32_t                    descriptorWriteCo
     vkUpdateDescriptorSets( this->id, descriptorWriteCount, pDescriptorWrites,
                             descriptorCopyCount, pDescriptorCopies );
 }
+
+// Swapchain
+VkResult Device::createSwapchain( const VkSwapchainCreateInfoKHR* pCreateInfo,
+                                  VkSwapchainKHR*                 pSwapchain )
+{
+    return vkCreateSwapchainKHR( this->id, pCreateInfo, nullptr, pSwapchain );
+}
+void Device::destroySwapchain( VkSwapchainKHR swapchain )
+{
+    vkDestroySwapchainKHR( this->id, swapchain, nullptr );
+}
+VkResult Device::createSharedSwapchains( uint32_t                        swapchainCount,
+                                         const VkSwapchainCreateInfoKHR* pCreateInfos,
+                                         VkSwapchainKHR*                 pSwapchains )
+{
+    return vkCreateSharedSwapchainsKHR( this->id, swapchainCount,
+                                        pCreateInfos, nullptr, pSwapchains );
+}
+VkResult Device::getSwapchainImages( VkSwapchainKHR swapchain,
+                                     uint32_t*      pSwapchainImageCount,
+                                     VkImage*       pSwapchainImages )
+{
+    return vkGetSwapchainImagesKHR( this->id, swapchain,
+                                    pSwapchainImageCount, pSwapchainImages );
+}
+VkResult Device::acquireNextImage( VkSwapchainKHR swapchain,
+                                   uint64_t       timeout,
+                                   VkSemaphore    semaphore,
+                                   VkFence        fence,
+                                   uint32_t*      pImageIndex )
+{
+    return vkAcquireNextImageKHR( this->id, swapchain, timeout,
+                                  semaphore, fence, pImageIndex );
+}
+

@@ -7,6 +7,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "device.hpp"
+
 class GraphicsShader
 {
 public:
@@ -17,7 +19,7 @@ public:
     
     GraphicsShader() {}
 
-    GraphicsShader( VkDevice             device,
+    GraphicsShader( Device*              device,
                     std::vector<uint8_t> vertex_code,
                     std::vector<uint8_t> fragment_code,
                     std::vector<uint8_t> tessctrl_code,
@@ -30,7 +32,7 @@ public:
 
     ~GraphicsShader() { this->deinit(); }
 
-    void init( VkDevice             device,
+    void init( Device*              device,
                std::vector<uint8_t> vertex_code,
                std::vector<uint8_t> fragment_code,
                std::vector<uint8_t> tessctrl_code,
@@ -41,7 +43,7 @@ public:
 
 private:
 
-    VkDevice device;
+    Device* device = nullptr;
 
     void createShaderModule( VkShaderStageFlagBits stage,
                              std::vector<uint8_t>  code );

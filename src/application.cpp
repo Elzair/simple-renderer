@@ -15,18 +15,18 @@ void VulkanApplication::run( int width, int height )
 
 VulkanApplication::~VulkanApplication()
 {
-    vkDestroySemaphore( this->device.id, this->renderFinishSemaphore, nullptr );
-    vkDestroySemaphore( this->device.id, this->imageAvailableSemaphore, nullptr );
-    vkDestroyDescriptorPool( this->device.id, this->descriptorPool, nullptr );
+    this->device.destroySemaphore( this->renderFinishSemaphore );
+    this->device.destroySemaphore( this->imageAvailableSemaphore );
+    this->device.destroyDescriptorPool( this->descriptorPool );
     this->uniform.deinit();
     this->model.deinit();
     this->texture.deinit();
     this->depth.deinit();
-    vkDestroyCommandPool( this->device.id, this->commandPool, nullptr );
-    vkDestroyPipeline( this->device.id, this->graphicsPipeline, nullptr );
-    vkDestroyPipelineLayout( this->device.id, this->pipelineLayout, nullptr );
-    vkDestroyDescriptorSetLayout( this->device.id, this->descriptorSetLayout, nullptr );
-    vkDestroyRenderPass( this->device.id, this->renderPass, nullptr );
+    this->device.destroyCommandPool( this->commandPool );
+    this->device.destroyPipeline( this->graphicsPipeline );
+    this->device.destroyPipelineLayout( this->pipelineLayout );
+    this->device.destroyDescriptorSetLayout( this->descriptorSetLayout );
+    this->device.destroyRenderPass( this->renderPass );
     this->swapchain.deinit();
     vkDestroySurfaceKHR( this->instance.id, this->surface, nullptr );
     std::cout << "Got here!" << std::endl;
@@ -80,7 +80,7 @@ void VulkanApplication::initVulkan( int width, int height )
                        requiredValidationLayers );
 
     this->swapchain.init( this->physical,
-                          this->device.id,
+                          &this->device,
                           this->surface,
                           this->width,
                           this->height,
@@ -165,7 +165,7 @@ void VulkanApplication::recreateSwapChain( int width, int height )
     this->height = height;
 
     this->swapchain.refresh( this->physical,
-                             this->device.id,
+                             &this->device,
                              this->surface,
                              this->width,
                              this->height,
@@ -387,7 +387,7 @@ void VulkanApplication::createGraphicsPipeline(  )
 {
     auto vs_code = ReadFile( "shaders/vert.spv" );
     auto fs_code = ReadFile( "shaders/frag.spv" );
-    GraphicsShader shader( this->device.id, vs_code, fs_code, {}, {}, {} );
+    GraphicsShader shader( &this->device, vs_code, fs_code, {}, {}, {} );
 
     // Describe the format of the input vertex data
     auto bindingDescription    = Vertex::getBindingDescription();

@@ -44,7 +44,7 @@ public:
 
 private:
 
-    Device*         device;
+    Device*         device      = nullptr;
     VkQueue         queue       = VK_NULL_HANDLE;
     VkCommandPool   pool        = VK_NULL_HANDLE;
     bool            initialized = false;

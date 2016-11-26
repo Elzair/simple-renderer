@@ -21,7 +21,7 @@ public:
     std::vector<VkFramebuffer> framebuffers;
     
     SwapChain( VkPhysicalDevice      physical,
-               VkDevice              device,
+               Device*               device,
                VkSurfaceKHR          surface,
                int                   width,
                int                   height,
@@ -35,7 +35,7 @@ public:
     ~SwapChain() { this->deinit( true ); }
 
     void init( VkPhysicalDevice      physical,
-               VkDevice              device,
+               Device*               device,
                VkSurfaceKHR          surface,
                int                   width,
                int                   height,
@@ -44,7 +44,7 @@ public:
     void deinit( bool destroySwapchain = true );
 
     void refresh( VkPhysicalDevice      physical,
-                  VkDevice              device,
+                  Device*               device,
                   VkSurfaceKHR          surface,
                   int                   width,
                   int                   height,
@@ -57,7 +57,7 @@ public:
 private:
 
     VkPhysicalDevice physical;
-    VkDevice         device;
+    Device*          device;
     VkSurfaceKHR     surface;
     bool             initialized = false;
 

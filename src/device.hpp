@@ -168,4 +168,20 @@ public:
                                const VkWriteDescriptorSet* pDescriptorWrites,
                                uint32_t                    descriptorCopyCount,
                                const VkCopyDescriptorSet*  pDescriptorCopies );
+
+    // Swapchain
+    VkResult createSwapchain( const VkSwapchainCreateInfoKHR* pCreateInfo,
+                              VkSwapchainKHR*                 pSwapchain );
+    void destroySwapchain( VkSwapchainKHR swapchain );
+    VkResult createSharedSwapchains( uint32_t                        swapchainCount,
+                                     const VkSwapchainCreateInfoKHR* pCreateInfos,
+                                     VkSwapchainKHR*                 pSwapchains );
+    VkResult getSwapchainImages( VkSwapchainKHR swapchain,
+                                 uint32_t*      pSwapchainImageCount,
+                                 VkImage*       pSwapchainImages );
+    VkResult acquireNextImage( VkSwapchainKHR swapchain,
+                               uint64_t       timeout,
+                               VkSemaphore    semaphore,
+                               VkFence        fence,
+                               uint32_t*      pImageIndex );
 };

@@ -53,7 +53,7 @@ public:
 
 protected:
 
-    Device*        device;
+    Device*        device      = nullptr;
     VkQueue        queue       = VK_NULL_HANDLE;
     VkCommandPool  commandPool = VK_NULL_HANDLE;
     uint32_t       width;

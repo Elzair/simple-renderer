@@ -3,7 +3,7 @@
 #include "swapchain.hpp"
 
 void SwapChain::init( VkPhysicalDevice      physical,
-                      VkDevice              device,
+                      Device*               device,
                       VkSurfaceKHR          surface,
                       int                   width,
                       int                   height,
@@ -63,20 +63,16 @@ void SwapChain::init( VkPhysicalDevice      physical,
 
     // Create swapchain
     VkSwapchainKHR newSwapchain = VK_NULL_HANDLE;
-    VK_CHECK_RESULT( vkCreateSwapchainKHR( this->device,
-                                           &createInfo,
-                                           nullptr,
-                                           &newSwapchain ) );
+    VK_CHECK_RESULT( this->device->createSwapchain( &createInfo,
+                                                   &newSwapchain ) );
     *&this->id = newSwapchain;
 
     // Retrieve handles to all swapchain images
     // Since the implementation can create more images,
     // we must query the number of images
-    vkGetSwapchainImagesKHR( this->device, this->id,
-                             &imageCount, nullptr );
+    this->device->getSwapchainImages( this->id, &imageCount, nullptr );
     this->images.resize( imageCount );
-    vkGetSwapchainImagesKHR( this->device, this->id,
-                             &imageCount, this->images.data() );
+    this->device->getSwapchainImages( this->id, &imageCount, this->images.data() );
 
     // Create Image Views
     this->imageViews.resize( this->images.size() );
@@ -94,22 +90,22 @@ void SwapChain::deinit( bool destroySwapchain )
 {
     for ( auto fb : this->framebuffers )
     {
-        vkDestroyFramebuffer( this->device, fb, nullptr );
+        this->device->destroyFramebuffer( fb );
     }
     for ( auto imgview : this->imageViews )
     {
-        vkDestroyImageView( this->device, imgview, nullptr );
+        this->device->destroyImageView( imgview );
     }
     if ( destroySwapchain && this->id != VK_NULL_HANDLE )
     {
-        vkDestroySwapchainKHR( this->device, this->id, nullptr );
+        this->device->destroySwapchain( this->id );
     }
 
     this->initialized = ( this->id == VK_NULL_HANDLE ) ? false : true;
 }
 
 void SwapChain::refresh( VkPhysicalDevice      physical,
-                         VkDevice              device,
+                         Device*               device,
                          VkSurfaceKHR          surface,
                          int                   width,
                          int                   height,
@@ -146,10 +142,8 @@ void SwapChain::createFramebuffers( VkRenderPass renderPass,
         framebufferCreateInfo.height          = this->extent.height;
         framebufferCreateInfo.layers          = 1;
 
-        VK_CHECK_RESULT( vkCreateFramebuffer( this->device,
-                                              &framebufferCreateInfo,
-                                              nullptr,
-                                              &this->framebuffers[i] ) );
+        VK_CHECK_RESULT( this->device->createFramebuffer( &framebufferCreateInfo,
+                                                          &this->framebuffers[i] ) );
     }
 }
 
@@ -232,10 +226,8 @@ VkImageView SwapChain::createImageView( VkImage            image,
 
     VkImageView view = VK_NULL_HANDLE;
 
-    VK_CHECK_RESULT( vkCreateImageView( this->device,
-                                        &viewInfo,
-                                        nullptr,
-                                        &view ) );
+    VK_CHECK_RESULT( this->device->createImageView( &viewInfo,
+                                                    &view ) );
 
     return view;
 }
