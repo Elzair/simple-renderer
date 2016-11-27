@@ -10,6 +10,7 @@ set(SOURCE_FILES
   instance.cpp
   main.cpp
   model.cpp
+  resource.cpp
   shader.cpp
   swapchain.cpp
   texture.cpp

@@ -49,6 +49,7 @@ void GraphicsShader::createShaderModule(
     if ( code.size() > 0 ) // Only create a shader if the user specified code
     {
         VkShaderModuleCreateInfo info = {};
+        info.sType     = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         info.codeSize = code.size();
         info.pCode    = (uint32_t*)code.data();
 

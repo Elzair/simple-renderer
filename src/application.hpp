@@ -21,6 +21,7 @@
 #include "image.hpp"
 #include "instance.hpp"
 #include "model.hpp"
+#include "resource.hpp"
 #include "shader.hpp"
 #include "swapchain.hpp"
 #include "texture.hpp"
@@ -37,41 +38,43 @@ public:
 
 private:
     
-    GLFWwindow*                     window;
-    int                             width;
-    int                             height;
+    GLFWwindow*               window;
+    int                       width;
+    int                       height;
 
-    Instance                        instance;
-    VkDebugReportCallbackEXT        callback;
-    VkSurfaceKHR                    surface;
+    Instance                  instance;
+    VkDebugReportCallbackEXT  callback;
+    VkSurfaceKHR              surface;
 
-    VkPhysicalDevice                physical = VK_NULL_HANDLE;
-    Device                          device;
+    VkPhysicalDevice          physical = VK_NULL_HANDLE;
+    Device                    device;
 
-    SwapChain                       swapchain;
+    SwapChain                 swapchain;
    
-    VkRenderPass                    renderPass          = VK_NULL_HANDLE;
-    VkDescriptorSetLayout           descriptorSetLayout = VK_NULL_HANDLE;
-    VkPipelineLayout                pipelineLayout      = VK_NULL_HANDLE;
-    VkPipeline                      graphicsPipeline    = VK_NULL_HANDLE;
+    VkRenderPass              renderPass = VK_NULL_HANDLE;
 
-    VkCommandPool                   commandPool = VK_NULL_HANDLE;
+    DescriptorLayoutContainer descriptorSetLayout;
 
-    Image                           depth;
+    VkPipelineLayout          pipelineLayout   = VK_NULL_HANDLE;
+    VkPipeline                graphicsPipeline = VK_NULL_HANDLE;
 
-    Texture                         texture;
+    VkCommandPool             commandPool = VK_NULL_HANDLE;
 
-    Model                           model;
+    Image                     depth;
 
-    Buffer                          uniform;
+    Texture                   texture;
 
-    VkDescriptorPool                descriptorPool = VK_NULL_HANDLE;
-    VkDescriptorSet                 descriptorSet; // Freed when descriptorPool is destroyed
+    Model                     model;
 
-    CommandBuffers                  commandBuffers;
+    Buffer                    uniform;
 
-    VkSemaphore                     imageAvailableSemaphore = VK_NULL_HANDLE;
-    VkSemaphore                     renderFinishSemaphore   = VK_NULL_HANDLE;
+    DescriptorPool            descriptorPool;
+    VkDescriptorSet           descriptorSet; // Freed when descriptorPool is destroyed
+
+    CommandBuffers            commandBuffers;
+
+    VkSemaphore               imageAvailableSemaphore = VK_NULL_HANDLE;
+    VkSemaphore               renderFinishSemaphore   = VK_NULL_HANDLE;
 
     static void onWindowResized( GLFWwindow* window,
                                  int         width,

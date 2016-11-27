@@ -17,7 +17,8 @@ VulkanApplication::~VulkanApplication()
 {
     this->device.destroySemaphore( this->renderFinishSemaphore );
     this->device.destroySemaphore( this->imageAvailableSemaphore );
-    this->device.destroyDescriptorPool( this->descriptorPool );
+    //this->device.destroyDescriptorPool( this->descriptorPool );
+    this->descriptorPool.deinit();
     this->uniform.deinit();
     this->model.deinit();
     this->texture.deinit();
@@ -25,7 +26,8 @@ VulkanApplication::~VulkanApplication()
     this->device.destroyCommandPool( this->commandPool );
     this->device.destroyPipeline( this->graphicsPipeline );
     this->device.destroyPipelineLayout( this->pipelineLayout );
-    this->device.destroyDescriptorSetLayout( this->descriptorSetLayout );
+    //this->device.destroyDescriptorSetLayout( this->descriptorSetLayout );
+    this->descriptorSetLayout.deinit();
     this->device.destroyRenderPass( this->renderPass );
     this->swapchain.deinit();
     vkDestroySurfaceKHR( this->instance.id, this->surface, nullptr );
@@ -351,36 +353,43 @@ void VulkanApplication::createRenderPass()
 
 void VulkanApplication::createDescriptorSetLayout()
 {
-    // Creatout layout for uniform buffer
-    VkDescriptorSetLayoutBinding uboLayoutBinding = {};
-    uboLayoutBinding.binding            = 0;
-    uboLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    uboLayoutBinding.descriptorCount    = 1;
-    uboLayoutBinding.stageFlags         = VK_SHADER_STAGE_VERTEX_BIT;
-    uboLayoutBinding.pImmutableSamplers = nullptr;
+    // // Creatout layout for uniform buffer
+    // VkDescriptorSetLayoutBinding uboLayoutBinding = {};
+    // uboLayoutBinding.binding            = 0;
+    // uboLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    // uboLayoutBinding.descriptorCount    = 1;
+    // uboLayoutBinding.stageFlags         = VK_SHADER_STAGE_VERTEX_BIT;
+    // uboLayoutBinding.pImmutableSamplers = nullptr;
 
-    // Create layout for texture sampler
-    VkDescriptorSetLayoutBinding samplerLayoutBinding = {};
-    samplerLayoutBinding.binding            = 1;
-    samplerLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    samplerLayoutBinding.descriptorCount    = 1;
-    samplerLayoutBinding.stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT;
-    samplerLayoutBinding.pImmutableSamplers = nullptr;
+    // // Create layout for texture sampler
+    // VkDescriptorSetLayoutBinding samplerLayoutBinding = {};
+    // samplerLayoutBinding.binding            = 1;
+    // samplerLayoutBinding.descriptorType     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    // samplerLayoutBinding.descriptorCount    = 1;
+    // samplerLayoutBinding.stageFlags         = VK_SHADER_STAGE_FRAGMENT_BIT;
+    // samplerLayoutBinding.pImmutableSamplers = nullptr;
 
-    std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
-        uboLayoutBinding,
-        samplerLayoutBinding
-    };
+    // std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
+    //     uboLayoutBinding,
+    //     samplerLayoutBinding
+    // };
     
-    VkDescriptorSetLayoutCreateInfo layoutInfo = {};
-    layoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = bindings.size();
-    layoutInfo.pBindings    = bindings.data();
+    // VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+    // layoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    // layoutInfo.bindingCount = bindings.size();
+    // layoutInfo.pBindings    = bindings.data();
 
-    VK_CHECK_RESULT( vkCreateDescriptorSetLayout( this->device.id,
-                                                  &layoutInfo,
-                                                  nullptr,
-                                                  &this->descriptorSetLayout ) );
+    // VK_CHECK_RESULT( vkCreateDescriptorSetLayout( this->device.id,
+    //                                               &layoutInfo,
+    //                                               nullptr,
+    //                                               &this->descriptorSetLayout ) );
+
+    std::vector<DescriptorBinding> bindings;
+    bindings.emplace_back( 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                           1, VK_SHADER_STAGE_VERTEX_BIT );
+    bindings.emplace_back( 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                           1, VK_SHADER_STAGE_FRAGMENT_BIT ); 
+    this->descriptorSetLayout.init( &this->device, { { bindings } } );
 }
 
 void VulkanApplication::createGraphicsPipeline(  )
@@ -489,18 +498,21 @@ void VulkanApplication::createGraphicsPipeline(  )
     colorBlendCreateInfo.blendConstants[3] = 0.0f;
 
     // Create Pipeline Layout
-    VkDescriptorSetLayout      setLayouts[]             = { this->descriptorSetLayout };
-    VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
-    pipelineLayoutCreateInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutCreateInfo.setLayoutCount         = 1;
-    pipelineLayoutCreateInfo.pSetLayouts            = setLayouts;
-    pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
-    pipelineLayoutCreateInfo.pPushConstantRanges    = 0;
+    // VkDescriptorSetLayout      setLayouts[]             = {
+    //     this->descriptorSetLayout.getLayout( 0 ).getLayout()
+    // };
+    // VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
+    // pipelineLayoutCreateInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    // pipelineLayoutCreateInfo.setLayoutCount         = 1;
+    // pipelineLayoutCreateInfo.pSetLayouts            = setLayouts;
+    // pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
+    // pipelineLayoutCreateInfo.pPushConstantRanges    = 0;
 
-    VK_CHECK_RESULT( vkCreatePipelineLayout( this->device.id,
-                                             &pipelineLayoutCreateInfo,
-                                             nullptr,
-                                             &this->pipelineLayout ) );
+    // VK_CHECK_RESULT( vkCreatePipelineLayout( this->device.id,
+    //                                          &pipelineLayoutCreateInfo,
+    //                                          nullptr,
+    //                                          &this->pipelineLayout ) );
+
 
     // Create Graphics Pipeline
     VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
@@ -515,7 +527,8 @@ void VulkanApplication::createGraphicsPipeline(  )
     pipelineCreateInfo.pDepthStencilState  = &depthStencil;
     pipelineCreateInfo.pColorBlendState    = &colorBlendCreateInfo;
     pipelineCreateInfo.pDynamicState       = nullptr;
-    pipelineCreateInfo.layout              = this->pipelineLayout;
+    //pipelineCreateInfo.layout              = this->pipelineLayout;
+    pipelineCreateInfo.layout              = this->descriptorSetLayout.getPipelineLayout();
     pipelineCreateInfo.renderPass          = this->renderPass;
     pipelineCreateInfo.subpass             = 0;
     pipelineCreateInfo.basePipelineHandle  = VK_NULL_HANDLE;
@@ -544,37 +557,41 @@ void VulkanApplication::createCommandPool()
 
 void VulkanApplication::createDescriptorPool()
 {
-    std::array<VkDescriptorPoolSize, 2> poolSizes = {};
-    poolSizes[0].type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[0].descriptorCount = 1;
-    poolSizes[1].type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[1].descriptorCount = 1;
+    // std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+    // poolSizes[0].type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    // poolSizes[0].descriptorCount = 1;
+    // poolSizes[1].type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    // poolSizes[1].descriptorCount = 1;
 
-    VkDescriptorPoolCreateInfo poolInfo = {};
-    poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = poolSizes.size();
-    poolInfo.pPoolSizes    = poolSizes.data();
-    poolInfo.maxSets       = 1;
+    // VkDescriptorPoolCreateInfo poolInfo = {};
+    // poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    // poolInfo.poolSizeCount = poolSizes.size();
+    // poolInfo.pPoolSizes    = poolSizes.data();
+    // poolInfo.maxSets       = 1;
     
-    VK_CHECK_RESULT( vkCreateDescriptorPool( this->device.id,
-                                             &poolInfo,
-                                             nullptr,
-                                             &this->descriptorPool ) );
+    // VK_CHECK_RESULT( vkCreateDescriptorPool( this->device.id,
+    //                                          &poolInfo,
+    //                                          nullptr,
+    //                                          &this->descriptorPool ) );
+    this->descriptorPool.init( &this->device,
+                               20,
+                               &this->descriptorSetLayout );
 }
 
 void VulkanApplication::createDescriptorSet()
 {
-    // Create initial descriptors
-    VkDescriptorSetLayout       layouts[] = { this->descriptorSetLayout };
-    VkDescriptorSetAllocateInfo allocInfo = {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-    allocInfo.descriptorPool     = this->descriptorPool;
-    allocInfo.descriptorSetCount = 1;
-    allocInfo.pSetLayouts        = layouts;
+    //// Create initial descriptors
+    //VkDescriptorSetLayout       layouts[] = { this->descriptorSetLayout };
+    //VkDescriptorSetAllocateInfo allocInfo = {};
+    //allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    //allocInfo.descriptorPool     = this->descriptorPool;
+    //allocInfo.descriptorSetCount = 1;
+    //allocInfo.pSetLayouts        = layouts;
 
-    VK_CHECK_RESULT( vkAllocateDescriptorSets( this->device.id,
-                                               &allocInfo,
-                                               &this->descriptorSet ) );
+    //VK_CHECK_RESULT( vkAllocateDescriptorSets( this->device.id,
+    //                                           &allocInfo,
+    //                                           &this->descriptorSet ) );
+    this->descriptorSet = this->descriptorPool.allocateDescriptorSet();
 
     // Now create buffer to hold uniform data
     VkDescriptorBufferInfo bufferInfo = {};
@@ -663,7 +680,8 @@ void VulkanApplication::createCommandBuffers()
         // Bind uniform buffer(s)
         vkCmdBindDescriptorSets( this->commandBuffers[i].id,
                                  VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                 this->pipelineLayout,
+                                 //this->pipelineLayout,
+                                 this->descriptorSetLayout.getPipelineLayout(),
                                  0,
                                  1,
                                  &this->descriptorSet,
