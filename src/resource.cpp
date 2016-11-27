@@ -43,9 +43,19 @@ void DescriptorLayoutContainer::init(
 
 void DescriptorLayoutContainer::deinit()
 {
+    // Destroy pipeline layout
+    if ( this->pipelineLayout != VK_NULL_HANDLE )
+    {
+        this->device->destroyPipelineLayout( this->pipelineLayout );
+    }
+    
+    // Destroy descriptor layouts
     for ( auto& layout : this->layouts )
     {
-        this->device->destroyDescriptorSetLayout( layout );
+        if ( layout != VK_NULL_HANDLE )
+        {
+            this->device->destroyDescriptorSetLayout( layout );
+        }
     }
 }
 
@@ -134,12 +144,6 @@ void DescriptorPool::init( Device*                    device,
         }
     }
 
-    std::cout << "Creating descriptor pool: " << poolSizes.size() << std::endl;
-    for ( auto& p : poolSizes )
-    {
-        std::cout << "Type: " << p.type << " Count: " << p.descriptorCount << std::endl;
-    }
-
     VkDescriptorPoolCreateInfo poolInfo = {};
     poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     poolInfo.poolSizeCount = poolSizes.size();
@@ -184,25 +188,3 @@ VkDescriptorSet DescriptorPool::allocateDescriptorSet()
 
     return descriptorSet;
 }
-
-// void ResourceManager::init( Device*                    device,
-//                             std::vector<uint32_t>      ids,
-//                             DescriptorLayoutContainer* layouts )
-// {
-//     this->device  = device;
-//     this->layouts = layouts;
-
-//     this->descriptorPools.resize( ids.size() );
-
-//     // Allocate descriptor pools
-//     for ( auto id : ids )
-//     {
-//         this->descriptorPools[ id ].init( this->device,
-//                                           this->layouts->getLayout( ids[ id ] ) );
-//     }
-// }
-
-// DescriptorSet ResourceManager::allocateDescriptorSet( uint32_t id, uint32_t layoutId )
-// {
-    
-// }

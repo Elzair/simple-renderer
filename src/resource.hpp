@@ -113,30 +113,3 @@ private:
     uint32_t                   maxSets = 0;
     VkDescriptorPool           pool    = VK_NULL_HANDLE;
 };
-
-// class ResourceManager
-// {
-// public:
-    
-//     ResourceManager() {}
-
-//     ResourceManager( Device*                    device,
-//                      std::vector<uint32_t>      ids,
-//                      DescriptorLayoutContainer* layouts )
-//     {
-//         this->init( device, ids, layouts );
-//     }
-
-//     void init( Device*                    device,
-//                std::vector<uint32_t>      ids,
-//                DescriptorLayoutContainer* layouts );
-
-//     DescriptorSet allocateDescriptorSet( uint32_t id, uint32_t layoutId );
-
-// private:
-
-//     Device*                     device  = nullptr;
-//     DescriptorLayoutContainer*  layouts = nullptr;
-
-//     std::vector<DescriptorPool> descriptorPools;
-// };

@@ -21,6 +21,7 @@
 #include "image.hpp"
 #include "instance.hpp"
 #include "model.hpp"
+#include "renderpass.hpp"
 #include "resource.hpp"
 #include "shader.hpp"
 #include "swapchain.hpp"
@@ -51,11 +52,10 @@ private:
 
     SwapChain                 swapchain;
    
-    VkRenderPass              renderPass = VK_NULL_HANDLE;
+    RenderPass                renderPass;
 
     DescriptorLayoutContainer descriptorSetLayout;
 
-    VkPipelineLayout          pipelineLayout   = VK_NULL_HANDLE;
     VkPipeline                graphicsPipeline = VK_NULL_HANDLE;
 
     VkCommandPool             commandPool = VK_NULL_HANDLE;
