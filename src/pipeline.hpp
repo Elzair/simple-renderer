@@ -23,7 +23,7 @@ public:
         Device*                                        device,
         RenderPass*                                    renderPass,
         GraphicsShader*                                shader,
-        DescriptorLayoutContainer*                     layout,
+        ResourceLayoutContainer*                       layout,
         SwapChain*                                     swapchain,
         VkVertexInputBindingDescription                vertexInfo,
         std::vector<VkVertexInputAttributeDescription> attributeInfo
@@ -39,7 +39,7 @@ public:
         Device*                                        device,
         RenderPass*                                    renderPass,
         GraphicsShader*                                shader,
-        DescriptorLayoutContainer*                     layout,
+        ResourceLayoutContainer*                       layout,
         SwapChain*                                     swapchain,
         VkVertexInputBindingDescription                vertexInfo,
         std::vector<VkVertexInputAttributeDescription> attributeInfo

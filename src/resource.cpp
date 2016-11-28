@@ -2,9 +2,9 @@
 #include "resource.hpp"
 #include <cassert>
 
-void DescriptorLayoutContainer::init(
+void ResourceLayoutContainer::init(
     Device*                        device,
-    std::vector<DescriptorSetInfo> info
+    std::vector<ResourceInfo> info
     )
 {
     this->device = device;
@@ -41,7 +41,7 @@ void DescriptorLayoutContainer::init(
     this->createPipelineLayout();
 }
 
-void DescriptorLayoutContainer::deinit()
+void ResourceLayoutContainer::deinit()
 {
     // Destroy pipeline layout
     if ( this->pipelineLayout != VK_NULL_HANDLE )
@@ -59,34 +59,34 @@ void DescriptorLayoutContainer::deinit()
     }
 }
 
-std::size_t DescriptorLayoutContainer::getNumLayouts() const
+std::size_t ResourceLayoutContainer::getNumLayouts() const
 {
     return this->layouts.size();
 }
 
-VkDescriptorSetLayout DescriptorLayoutContainer::getLayout( std::size_t idx ) const
+VkDescriptorSetLayout ResourceLayoutContainer::getLayout( std::size_t idx ) const
 {
     assert( ( idx >= 0 ) && ( idx < this->layouts.size() ) );
     return this->layouts[ idx ];
 }
 
-const std::vector<DescriptorBinding>& DescriptorLayoutContainer::getBindings( std::size_t idx ) const
+const std::vector<ResourceBinding>& ResourceLayoutContainer::getBindings( std::size_t idx ) const
 {
     assert( ( idx >= 0 ) && ( idx < this->bindings.size() ) );
     return this->bindings[ idx ];
 }
 
-const std::vector<VkDescriptorSetLayout>& DescriptorLayoutContainer::getLayouts() const
+const std::vector<VkDescriptorSetLayout>& ResourceLayoutContainer::getLayouts() const
 {
     return this->layouts;
 }
      
-VkPipelineLayout DescriptorLayoutContainer::getPipelineLayout() const
+VkPipelineLayout ResourceLayoutContainer::getPipelineLayout() const
 {
     return this->pipelineLayout;
 }
 
-void DescriptorLayoutContainer::createPipelineLayout()
+void ResourceLayoutContainer::createPipelineLayout()
 {
     VkPipelineLayoutCreateInfo info = {};
     info.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -99,9 +99,9 @@ void DescriptorLayoutContainer::createPipelineLayout()
                                                          &this->pipelineLayout ) );
 }
 
-void DescriptorPool::init( Device*                    device,
-                           uint32_t                   maxSets,
-                           DescriptorLayoutContainer* layout )
+void ResourcePool::init( Device*                  device,
+                         uint32_t                 maxSets,
+                         ResourceLayoutContainer* layout )
 {
     this->device  = device;
     this->layout  = layout;
@@ -153,7 +153,7 @@ void DescriptorPool::init( Device*                    device,
     VK_CHECK_RESULT( device->createDescriptorPool( &poolInfo, &this->pool ) );
 }
 
-void DescriptorPool::deinit()
+void ResourcePool::deinit()
 {
     if ( this->pool != VK_NULL_HANDLE )
     {
@@ -161,17 +161,17 @@ void DescriptorPool::deinit()
     }
 }
 
-uint32_t DescriptorPool::getId() const
+uint32_t ResourcePool::getId() const
 {
     return this->id;
 }
 
-uint32_t DescriptorPool::getMaxSets() const
+uint32_t ResourcePool::getMaxSets() const
 {
     return this->maxSets;
 }
 
-VkDescriptorSet DescriptorPool::allocateDescriptorSet()
+VkDescriptorSet ResourcePool::allocateDescriptorSet()
 {
     auto& tmp = this->layout->getLayouts();
 

@@ -6,54 +6,54 @@
 
 #include "device.hpp"
 
-struct DescriptorBinding
+struct ResourceBinding
 {
     uint32_t           binding = 0;
     VkDescriptorType   type    = VK_DESCRIPTOR_TYPE_MAX_ENUM;
     uint32_t           count   = 0;
     VkShaderStageFlags stages  = VK_SHADER_STAGE_ALL;
 
-    DescriptorBinding() {}
+    ResourceBinding() {}
 
-    DescriptorBinding( uint32_t           a_binding,
-                       VkDescriptorType   a_type,
-                       uint32_t           a_count,
-                       VkShaderStageFlags a_stages ) :
+    ResourceBinding( uint32_t           a_binding,
+                     VkDescriptorType   a_type,
+                     uint32_t           a_count,
+                     VkShaderStageFlags a_stages ) :
         binding( a_binding ), type( a_type ), count( a_count ), stages( a_stages ) {}
 
-    DescriptorBinding( const DescriptorBinding& b ) :
+    ResourceBinding( const ResourceBinding& b ) :
         binding( b.binding ), type( b.type ), count( b.count ), stages( b.stages ) {}
 };
 
-struct DescriptorSetInfo
+struct ResourceInfo
 {
-    std::vector<DescriptorBinding> bindings;
+    std::vector<ResourceBinding> bindings;
 
-    DescriptorSetInfo() {}
+    ResourceInfo() {}
 
-    DescriptorSetInfo( std::vector<DescriptorBinding> a_bindings ) :
+    ResourceInfo( std::vector<ResourceBinding> a_bindings ) :
         bindings( std::move( a_bindings ) ) {}
 
-    DescriptorSetInfo( const DescriptorSetInfo& d ) :
+    ResourceInfo( const ResourceInfo& d ) :
         bindings( std::move( d.bindings ) ) {}
 };
 
-class DescriptorLayoutContainer
+class ResourceLayoutContainer
 {
 public:
 
-    DescriptorLayoutContainer() {}
+    ResourceLayoutContainer() {}
 
-    DescriptorLayoutContainer( Device*                        device,
-                               std::vector<DescriptorSetInfo> info )
+    ResourceLayoutContainer( Device*                        device,
+                               std::vector<ResourceInfo> info )
     {
         this->init( device, info );
     }
 
-    ~DescriptorLayoutContainer() { this->deinit(); }
+    ~ResourceLayoutContainer() { this->deinit(); }
 
     void init( Device*                        device,
-               std::vector<DescriptorSetInfo> info  );
+               std::vector<ResourceInfo> info  );
 
     void deinit();
 
@@ -61,7 +61,7 @@ public:
 
     VkDescriptorSetLayout getLayout( std::size_t idx ) const;
 
-    const std::vector<DescriptorBinding>& getBindings( std::size_t idx ) const;
+    const std::vector<ResourceBinding>& getBindings( std::size_t idx ) const;
 
     const std::vector<VkDescriptorSetLayout>& getLayouts() const;
 
@@ -72,30 +72,30 @@ private:
     Device*          device         = nullptr;
     VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
     
-    std::vector<std::vector<DescriptorBinding>> bindings;
-    std::vector<VkDescriptorSetLayout>          layouts;
+    std::vector<std::vector<ResourceBinding>> bindings;
+    std::vector<VkDescriptorSetLayout>        layouts;
 
     void createPipelineLayout();
 };
 
-class DescriptorPool
+class ResourcePool
 {
 public:
 
-    DescriptorPool() {}
+    ResourcePool() {}
 
-    DescriptorPool( Device*                    device,
-                    uint32_t                   maxSets,
-                    DescriptorLayoutContainer* layout )
+    ResourcePool( Device*                    device,
+                  uint32_t                   maxSets,
+                  ResourceLayoutContainer* layout )
     {
         this->init( device, maxSets, layout );
     }
 
-    ~DescriptorPool(  ) { this->deinit(); }
+    ~ResourcePool(  ) { this->deinit(); }
 
     void init( Device*                    device,
                uint32_t                   maxSets,
-               DescriptorLayoutContainer* layout );
+               ResourceLayoutContainer* layout );
 
     void deinit();
 
@@ -108,7 +108,7 @@ public:
 private:
 
     Device*                    device  = nullptr;
-    DescriptorLayoutContainer* layout  = nullptr;
+    ResourceLayoutContainer* layout  = nullptr;
     uint32_t                   id      = 0;
     uint32_t                   maxSets = 0;
     VkDescriptorPool           pool    = VK_NULL_HANDLE;

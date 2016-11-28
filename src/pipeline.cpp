@@ -5,7 +5,7 @@ void GraphicsPipeline::init(
         Device*                                        device,
         RenderPass*                                    renderPass,
         GraphicsShader*                                shader,
-        DescriptorLayoutContainer*                     layout,
+        ResourceLayoutContainer*                       layout,
         SwapChain*                                     swapchain,
         VkVertexInputBindingDescription                vertexInfo,
         std::vector<VkVertexInputAttributeDescription> attributeInfo

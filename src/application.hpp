@@ -55,7 +55,7 @@ private:
    
     RenderPass                renderPass;
 
-    DescriptorLayoutContainer descriptorSetLayout;
+    ResourceLayoutContainer   descriptorSetLayout;
 
     //VkPipeline                graphicsPipeline = VK_NULL_HANDLE;
     GraphicsPipeline          graphicsPipeline;
@@ -70,7 +70,7 @@ private:
 
     Buffer                    uniform;
 
-    DescriptorPool            descriptorPool;
+    ResourcePool              descriptorPool;
     VkDescriptorSet           descriptorSet; // Freed when descriptorPool is destroyed
 
     CommandBuffers            commandBuffers;
