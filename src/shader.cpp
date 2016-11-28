@@ -9,36 +9,47 @@
 #include "utils.hpp"
 
 void GraphicsShader::init( Device*              device,
-                           std::vector<uint8_t> vertex_code,
-                           std::vector<uint8_t> fragment_code,
-                           std::vector<uint8_t> tessctrl_code,
-                           std::vector<uint8_t> tesseval_code,
-                           std::vector<uint8_t> geometry_code )
+                           std::vector<uint8_t> vertexCode,
+                           std::vector<uint8_t> fragmentCode,
+                           std::vector<uint8_t> tessctrlCode,
+                           std::vector<uint8_t> tessevalCode,
+                           std::vector<uint8_t> geometryCode )
 {
-    this->num_modules = 0;
-    this->device      = device;
+    this->numModules = 0;
+    this->device     = device;
 
     this->createShaderModule( VK_SHADER_STAGE_VERTEX_BIT,
-                              vertex_code );
+                              vertexCode );
     this->createShaderModule( VK_SHADER_STAGE_FRAGMENT_BIT,
-                              fragment_code );
+                              fragmentCode );
     this->createShaderModule( VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
-                              tessctrl_code );
+                              tessctrlCode );
     this->createShaderModule( VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
-                              tesseval_code );
+                              tessevalCode );
     this->createShaderModule( VK_SHADER_STAGE_GEOMETRY_BIT,
-                              geometry_code );
+                              geometryCode );
 }
 
 void GraphicsShader::deinit()
 {
-    for ( auto i = 0; i < this->num_modules; i++ )
+    for ( auto i = 0; i < this->numModules; i++ )
     {
         if ( this->modules[ i ] != VK_NULL_HANDLE )
         {
             this->device->destroyShaderModule( this->modules[ i ] );
         }
     }
+}
+
+uint32_t GraphicsShader::getNumModules() const
+{
+    return this->numModules;
+}
+
+const std::array<VkPipelineShaderStageCreateInfo, 5>&
+GraphicsShader::getPipelineInfo() const
+{
+    return this->pipelineInfo;
 }
 
 void GraphicsShader::createShaderModule(
@@ -55,16 +66,16 @@ void GraphicsShader::createShaderModule(
 
         VK_CHECK_RESULT( this->device->createShaderModule(
                              &info,
-                             &this->modules[ this->num_modules ]
+                             &this->modules[ this->numModules ]
                              ) );
 
-        auto& ps_info  = this->pipeline_info[ this->num_modules ];
+        auto& ps_info  = this->pipelineInfo[ this->numModules ];
         ps_info = {};
         ps_info.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         ps_info.stage  = stage;
-        ps_info.module = this->modules[ this->num_modules ];
+        ps_info.module = this->modules[ this->numModules ];
         ps_info.pName  = "main";
         
-        this->num_modules++;
+        this->numModules++;
     }
 }

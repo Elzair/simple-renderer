@@ -21,6 +21,7 @@
 #include "image.hpp"
 #include "instance.hpp"
 #include "model.hpp"
+#include "pipeline.hpp"
 #include "renderpass.hpp"
 #include "resource.hpp"
 #include "shader.hpp"
@@ -56,7 +57,8 @@ private:
 
     DescriptorLayoutContainer descriptorSetLayout;
 
-    VkPipeline                graphicsPipeline = VK_NULL_HANDLE;
+    //VkPipeline                graphicsPipeline = VK_NULL_HANDLE;
+    GraphicsPipeline          graphicsPipeline;
 
     VkCommandPool             commandPool = VK_NULL_HANDLE;
 

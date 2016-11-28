@@ -12,38 +12,42 @@
 class GraphicsShader
 {
 public:
-
-    std::uint32_t                                  num_modules;
-    std::array<VkShaderModule, 5>                  modules;
-    std::array<VkPipelineShaderStageCreateInfo, 5> pipeline_info;
     
     GraphicsShader() {}
 
     GraphicsShader( Device*              device,
-                    std::vector<uint8_t> vertex_code,
-                    std::vector<uint8_t> fragment_code,
-                    std::vector<uint8_t> tessctrl_code,
-                    std::vector<uint8_t> tesseval_code,
-                    std::vector<uint8_t> geometry_code )
+                    std::vector<uint8_t> vertexCode,
+                    std::vector<uint8_t> fragmentCode,
+                    std::vector<uint8_t> tessctrlCode,
+                    std::vector<uint8_t> tessevalCode,
+                    std::vector<uint8_t> geometryCode )
     {
-        this->init( device, vertex_code, fragment_code, tessctrl_code,
-                    tesseval_code, geometry_code );
+        this->init( device, vertexCode, fragmentCode, tessctrlCode,
+                    tessevalCode, geometryCode );
     }
 
     ~GraphicsShader() { this->deinit(); }
 
     void init( Device*              device,
-               std::vector<uint8_t> vertex_code,
-               std::vector<uint8_t> fragment_code,
-               std::vector<uint8_t> tessctrl_code,
-               std::vector<uint8_t> tesseval_code,
-               std::vector<uint8_t> geometry_code );
+               std::vector<uint8_t> vertexCode,
+               std::vector<uint8_t> fragmentCode,
+               std::vector<uint8_t> tessctrlCode,
+               std::vector<uint8_t> tessevalCode,
+               std::vector<uint8_t> geometryCode );
 
     void deinit();
 
+    uint32_t getNumModules() const;
+
+    const std::array<VkPipelineShaderStageCreateInfo, 5>& getPipelineInfo() const;
+
 private:
 
-    Device* device = nullptr;
+    Device*                                        device = nullptr;
+    uint32_t                                       numModules;
+
+    std::array<VkShaderModule, 5>                  modules;
+    std::array<VkPipelineShaderStageCreateInfo, 5> pipelineInfo;
 
     void createShaderModule( VkShaderStageFlagBits stage,
                              std::vector<uint8_t>  code );

@@ -10,6 +10,7 @@ set(SOURCE_FILES
   instance.cpp
   main.cpp
   model.cpp
+  pipeline.cpp
   renderpass.cpp
   resource.cpp
   shader.cpp
