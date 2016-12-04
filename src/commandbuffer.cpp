@@ -38,6 +38,12 @@ CommandBuffer CommandPool::allocateCommandBuffer()
     return buffer;
 }
 
+void CommandPool::reset(  )
+{
+    this->device->resetCommandPool( this->pool,
+                                    VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT );
+}
+
 void CommandPool::allocateCommandBuffer2( VkCommandBuffer* cmdbuf )
 {
     VkCommandBufferAllocateInfo allocInfo = {};
@@ -71,9 +77,9 @@ void CommandBuffer::init( Device*      device,
     this->pool->allocateCommandBuffer2( &this->id );
 }
 
-void CommandBuffer::deinit(  )
+void CommandBuffer::deinit()
 {
-    this->pool->freeCommandBuffer( &this->id );
+    this->id     = VK_NULL_HANDLE;
     this->pool   = nullptr;
     this->queue  = VK_NULL_HANDLE;
     this->device = nullptr;

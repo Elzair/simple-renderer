@@ -45,6 +45,10 @@ public:
                          uint32_t queueIndex,
                          VkQueue* pQueue );
     VkResult queueWaitIdle( VkQueue queue );
+    VkResult queueSubmit( VkQueue             queue,
+                          uint32_t            submitCount,
+                          const VkSubmitInfo* pSubmits,
+                          VkFence             fence );
 
     // Command Buffers
     VkResult createCommandPool( const VkCommandPoolCreateInfo* pCreateInfo,

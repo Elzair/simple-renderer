@@ -59,7 +59,6 @@ void Image::init( VkPhysicalDevice physical,
 
     VK_CHECK_RESULT( this->device->createImage( &imageInfo,
                                                 &this->id ) );
-    std::cout << "Created image!" << std::endl;
 
     VkMemoryRequirements memRequirements;
     this->device->getImageMemoryRequirements( this->id,
@@ -74,10 +73,8 @@ void Image::init( VkPhysicalDevice physical,
     
     VK_CHECK_RESULT( this->device->allocateMemory( &allocInfo,
                                                    &this->memory ) );
-    std::cout << "Allocated memory!" << std::endl;
 
     this->device->bindImageMemory( this->id, this->memory, 0 );
-    std::cout << "Bound memory!" << std::endl;
 
     if ( this->type == ImageType::COLOR )
     {
@@ -142,17 +139,13 @@ void Image::init( VkPhysicalDevice physical,
     }
 
     // Transition image to final layout
-    std::cout << "Beginning layout transition!" << std::endl;
     this->transitionLayout( this->id, initialLayout, finalLayout, type );
-    std::cout << "Layout transitioned!" << std::endl;
 
     // Create Image View
-    std::cout << "Creating Image View!" << std::endl;
     this->createView( aspectFlags );
-    std::cout << "Image View created!" << std::endl;
 }
 
-void Image::deinit(  )
+void Image::deinit()
 {
     if ( this->view != VK_NULL_HANDLE )
     {
@@ -190,8 +183,6 @@ void Image::transitionLayout( VkImage       image,
                               VkImageLayout newLayout,
                               ImageType     type )
 {
-    std::cout << "Transitioning Layout!" << std::endl;
-    
     CommandBuffer commandBuffer( this->device,
                                  this->queue,
                                  this->commandPool );
@@ -265,19 +256,20 @@ void Image::transitionLayout( VkImage       image,
 
     commandBuffer.end();
 
-    std::cout << "Submitting Buffer!" << std::endl;
-    
+    // Submit CommandBuffer
     VkSubmitInfo submitInfo = {};
     submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers    = &commandBuffer.id;
-    VK_CHECK_RESULT( vkQueueSubmit( this->queue,
-                                    1,
-                                    &submitInfo,
-                                    VK_NULL_HANDLE ) );
-    this->device->queueWaitIdle( this->queue );
 
-    commandBuffer.deinit();
+    this->device->queueWaitIdle( queue );
+    VK_CHECK_RESULT( this->device->queueSubmit( this->queue,
+                                                1,
+                                                &submitInfo,
+                                                VK_NULL_HANDLE ) );
+    this->device->queueWaitIdle( queue );
+
+    //commandBuffer.deinit();
 }
 
 void Image::copy( VkImage src )
@@ -307,19 +299,21 @@ void Image::copy( VkImage src )
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     1,
                     &region );
-    this->device->queueWaitIdle( this->queue );
 
     commandBuffer.end();
-    
+
+    // Submit CommandBuffer
     VkSubmitInfo submitInfo = {};
     submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers    = &commandBuffer.id;
-    VK_CHECK_RESULT( vkQueueSubmit( this->queue,
-                                    1,
-                                    &submitInfo,
-                                    VK_NULL_HANDLE ) );
-    this->device->queueWaitIdle( this->queue );
 
-    commandBuffer.deinit();
+    this->device->queueWaitIdle( queue );
+    VK_CHECK_RESULT( this->device->queueSubmit( this->queue,
+                                                1,
+                                                &submitInfo,
+                                                VK_NULL_HANDLE ) );
+    this->device->queueWaitIdle( queue );
+
+    //commandBuffer.deinit();
 }

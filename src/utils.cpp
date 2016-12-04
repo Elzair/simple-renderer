@@ -52,6 +52,7 @@ VkFormat FindSupportedFormat( VkPhysicalDevice             physical,
 
     std::cerr << __FILE__ << " " << __func__ << " " << __LINE__ << ": Failed to find supported format" << std::endl;
     assert( 0 );
+    return (VkFormat)VK_NULL_HANDLE;
 }
 
 VkFormat FindDepthFormat( VkPhysicalDevice physical )
@@ -266,12 +267,14 @@ VkPhysicalDevice PickPhysicalDevice(
 
     std::cerr << __FILE__ << " " << __func__ << " " << __LINE__ << ": Failed to find a suitable GPU!" << std::endl;
     assert( 0 );
+    return (VkPhysicalDevice)VK_NULL_HANDLE;
 }
 
 /*
  * Debug Report
  */
 
+#if defined( DEBUG_BUILD )
 VkResult CreateDebugReportCallbackEXT(
     VkInstance                                instance,
     const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
@@ -292,6 +295,7 @@ VkResult CreateDebugReportCallbackEXT(
     }
 }
 
+
 void DestroyDebugReportCallbackEXT(
     VkInstance                   instance,
     VkDebugReportCallbackEXT     callback,
@@ -305,6 +309,7 @@ void DestroyDebugReportCallbackEXT(
         func( instance, callback, pAllocator );
     }
 }
+#endif
 
 /*
  * Memory
@@ -328,4 +333,5 @@ uint32_t FindMemoryType( VkPhysicalDevice      physical,
 
     std::cerr << __FILE__ << " " << __func__ << " " << __LINE__ << ": Failed to find a suitable memory type!" << std::endl;
     assert( 0 );
+    return UINT32_MAX;
 }

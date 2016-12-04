@@ -101,15 +101,11 @@ static inline void CheckResult( VkResult    res,
     assert( res == VK_SUCCESS );
 }
 
-#ifdef NDEBUG
+const std::vector<const char*> requiredDeviceExtensions = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
 
-const bool enableValidationLayers = false;
-
-const std::vector<const char*> requiredValidationLayers = {};
-
-#define VK_CHECK_RESULT( res ) assert( ( res ) == VK_SUCCESS )
-
-#else
+#if defined( DEBUG_BUILD )
 
 const bool enableValidationLayers = true;
 
@@ -117,10 +113,14 @@ const std::vector<const char*> requiredValidationLayers = {
   "VK_LAYER_LUNARG_standard_validation"
 };
 
-const std::vector<const char*> requiredDeviceExtensions = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
-
 #define VK_CHECK_RESULT( res ) CheckResult( res, __FILE__, __func__, __LINE__ )
+
+#else
+
+const bool enableValidationLayers = false;
+
+const std::vector<const char*> requiredValidationLayers = {};
+
+#define VK_CHECK_RESULT( res ) assert( ( res ) == VK_SUCCESS )
 
 #endif

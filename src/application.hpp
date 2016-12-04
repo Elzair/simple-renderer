@@ -112,6 +112,7 @@ private:
 
     void createSemaphores();
 
+#if defined( DEBUG_BUILD )
 #ifndef WIN32
 #define __stdcall
 #endif
@@ -127,4 +128,5 @@ private:
         );
 
     void createDebugCallback(  );
+#endif
 };

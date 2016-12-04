@@ -1,6 +1,4 @@
 
-
-
 set(SOURCE_FILES
   application.cpp
   buffer.cpp
@@ -28,6 +26,13 @@ target_link_libraries(renderer
   obj_loader
   stb::image
   dynlink)
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  message(STATUS "Creating Debug Build!")
+  target_compile_definitions(renderer PUBLIC DEBUG_BUILD)
+else()
+  message(STATUS "Creating Normal Build!")
+endif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
 set_property(TARGET renderer PROPERTY CXX_STANDARD 11)
 set_property(TARGET renderer PROPERTY CXX_STANDARD_REQUIRED ON)

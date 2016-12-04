@@ -108,18 +108,20 @@ void Buffer::copy( void*       data,
 
         commandBuffer.end();
 
-        //commandBuffer.submit();
+        // Submit CommandBuffer
         VkSubmitInfo submitInfo = {};
         submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers    = &commandBuffer.id;
-        VK_CHECK_RESULT( vkQueueSubmit( this->queue,
-                                        1,
-                                        &submitInfo,
-                                        VK_NULL_HANDLE ) );
-        this->device->queueWaitIdle( this->queue );
 
-        commandBuffer.deinit();
+        this->device->queueWaitIdle( queue );
+        VK_CHECK_RESULT( this->device->queueSubmit( this->queue,
+                                                    1,
+                                                    &submitInfo,
+                                                    VK_NULL_HANDLE ) );
+        this->device->queueWaitIdle( queue );
+
+        //commandBuffer.deinit();
     }
 }
 

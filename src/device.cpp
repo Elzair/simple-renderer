@@ -92,6 +92,13 @@ VkResult Device::queueWaitIdle( VkQueue queue )
 {
     return vkQueueWaitIdle( queue );
 }
+VkResult Device::queueSubmit( VkQueue             queue,
+                              uint32_t            submitCount,
+                              const VkSubmitInfo* pSubmits,
+                              VkFence             fence )
+{
+    return vkQueueSubmit( queue, submitCount, pSubmits, fence );
+}
 
 // Command Buffers
 VkResult Device::createCommandPool( const VkCommandPoolCreateInfo* pCreateInfo,

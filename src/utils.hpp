@@ -84,6 +84,7 @@ VkPhysicalDevice PickPhysicalDevice(
  * Debug Report
  */
 
+#if defined( DEBUG_BUILD )
 VkResult CreateDebugReportCallbackEXT(
     VkInstance                                instance,
     const VkDebugReportCallbackCreateInfoEXT* pCreateInfo,
@@ -96,6 +97,7 @@ void DestroyDebugReportCallbackEXT(
     VkDebugReportCallbackEXT     callback,
     const VkAllocationCallbacks* pAllocator
     );
+#endif
 
 /*
  * Memory

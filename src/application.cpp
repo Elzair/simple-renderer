@@ -31,7 +31,11 @@ VulkanApplication::~VulkanApplication()
     vkDestroySurfaceKHR( this->instance.id, this->surface, nullptr );
     std::cout << "Got here!" << std::endl;
     this->device.deinit();
+
+#if defined( DEBUG_BUILD )
     DestroyDebugReportCallbackEXT( this->instance.id, this->callback, nullptr );
+#endif
+    
     this->instance.deinit();
     glfwDestroyWindow( this->window );
 }
@@ -66,7 +70,9 @@ void VulkanApplication::initVulkan( int width, int height )
                          requiredValidationLayers );
     std::cout << "Created instance!" << std::endl;
 
+#if defined( DEBUG_BUILD )
     this->createDebugCallback();
+#endif
 
     this->createSurface();
 
@@ -99,6 +105,7 @@ void VulkanApplication::initVulkan( int width, int height )
     this->createCommandPool();
     std::cout << "Created Command Pool!" << std::endl;
         
+    std::cout << "Creating Depth Image!" << std::endl;
     this->depth.init( this->physical,
                       &this->device,
                       this->device.graphicsQueue,
@@ -114,6 +121,7 @@ void VulkanApplication::initVulkan( int width, int height )
                                         1 );
     std::cout << "Created Framebuffer!" << std::endl;
 
+    std::cout << "Creating Texture!" << std::endl;
     this->texture.init( this->physical,
                         &this->device,
                         this->device.graphicsQueue,
@@ -141,6 +149,7 @@ void VulkanApplication::initVulkan( int width, int height )
     std::cout << "Created Descriptor Sets!" << std::endl;
         
     this->createCommandBuffers();
+    std::cout << "Created Command Buffers!" << std::endl;
         
     this->createSemaphores();
 }
@@ -248,6 +257,7 @@ void VulkanApplication::drawFrame()
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores    = signalSemaphores;
 
+    this->device.queueWaitIdle( this->device.graphicsQueue );
     VK_CHECK_RESULT( vkQueueSubmit( this->device.graphicsQueue,
                                     1,
                                     &submitInfo,
@@ -394,6 +404,8 @@ void VulkanApplication::createCommandBuffers()
     //                              this->device.graphicsQueue,
     //                              this->commandPool,
     //                              this->swapchain.framebuffers.size() );
+    this->commandPool.reset();
+    this->commandBuffers.resize( this->swapchain.framebuffers.size() );
     for ( auto& cmdbuf : this->commandBuffers )
     {
         cmdbuf.deinit();
@@ -402,62 +414,93 @@ void VulkanApplication::createCommandBuffers()
                      &this->commandPool );
     }
 
-    for ( size_t i = 0; i < this->commandBuffers.size(); i++ )
+    std::size_t ii = 0;
+    for ( auto& cmdbuf : this->commandBuffers )
     {
-        this->commandBuffers[i].begin();
+        cmdbuf.begin();
                   
         // Start Render Pass
-        std::array<VkClearValue, 2> clearValues = {};
+        VkRect2D renderArea = {};
+        renderArea.offset = { 0, 0 };
+        renderArea.extent = this->swapchain.extent;
+        std::vector<VkClearValue> clearValues( 2 );
         clearValues[0].color        = { 0.0f, 0.0f, 0.0f, 1.0f };
         clearValues[1].depthStencil = { 1.0f, 0 };
+        
+        cmdbuf.beginRenderPass( this->renderPass,
+                                this->swapchain.framebuffers[ ii ],
+                                renderArea,
+                                clearValues,
+                                VK_SUBPASS_CONTENTS_INLINE );
+
+        //std::array<VkClearValue, 2> clearValues = {};
+        //clearValues[0].color        = { 0.0f, 0.0f, 0.0f, 1.0f };
+        //clearValues[1].depthStencil = { 1.0f, 0 };
       
-        VkRenderPassBeginInfo renderPassCreateInfo = {};
-        renderPassCreateInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassCreateInfo.renderPass        = this->renderPass.getRenderPass();
-        renderPassCreateInfo.framebuffer       = this->swapchain.framebuffers[i];
-        renderPassCreateInfo.renderArea.offset = {0, 0};
-        renderPassCreateInfo.renderArea.extent = this->swapchain.extent;
-        renderPassCreateInfo.clearValueCount   = clearValues.size();
-        renderPassCreateInfo.pClearValues      = clearValues.data();
+        //VkRenderPassBeginInfo renderPassCreateInfo = {};
+        //renderPassCreateInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        //renderPassCreateInfo.renderPass        = this->renderPass.getRenderPass();
+        //renderPassCreateInfo.framebuffer       = this->swapchain.framebuffers[i];
+        //renderPassCreateInfo.renderArea.offset = {0, 0};
+        //renderPassCreateInfo.renderArea.extent = this->swapchain.extent;
+        //renderPassCreateInfo.clearValueCount   = clearValues.size();
+        //renderPassCreateInfo.pClearValues      = clearValues.data();
 
-        vkCmdBeginRenderPass( this->commandBuffers[i].id,
-                              &renderPassCreateInfo,
-                              VK_SUBPASS_CONTENTS_INLINE );
+        //vkCmdBeginRenderPass( this->commandBuffers[i].id,
+        //                      &renderPassCreateInfo,
+        //                      VK_SUBPASS_CONTENTS_INLINE );
 
-        vkCmdBindPipeline( this->commandBuffers[i].id,
-                           VK_PIPELINE_BIND_POINT_GRAPHICS,
-                           this->graphicsPipeline.getPipeline() );
+        // Bind Pipeline
+        cmdbuf.bindPipeline( VK_PIPELINE_BIND_POINT_GRAPHICS, this->graphicsPipeline );
 
-        // Bind vertex buffer
-        VkBuffer     vertexBuffers[] = { this->model.vertexBuffer.id };
-        VkDeviceSize offsets[]       = { 0 };
-        vkCmdBindVertexBuffers( this->commandBuffers[i].id, 0, 1,
-                                vertexBuffers, offsets );
+        //vkCmdBindPipeline( this->commandBuffers[i].id,
+        //                   VK_PIPELINE_BIND_POINT_GRAPHICS,
+        //                   this->graphicsPipeline.getPipeline() );
 
-        // Bind index buffer
-        vkCmdBindIndexBuffer( this->commandBuffers[i].id,
-                              this->model.indexBuffer.id,
-                              0,
-                              VK_INDEX_TYPE_UINT32 );
+        // Bind Vertex Buffer
+        cmdbuf.bindVertexBuffer( 0, this->model.vertexBuffer, 0 );
+        //VkBuffer     vertexBuffers[] = { this->model.vertexBuffer.id };
+        //VkDeviceSize offsets[]       = { 0 };
+        //vkCmdBindVertexBuffers( this->commandBuffers[i].id, 0, 1,
+        //                        vertexBuffers, offsets );
+
+        // Bind Index Buffer
+        cmdbuf.bindIndexBuffer( this->model.indexBuffer, 0, VK_INDEX_TYPE_UINT32 );
+        
+        //vkCmdBindIndexBuffer( this->commandBuffers[i].id,
+        //                      this->model.indexBuffer.id,
+        //                      0,
+        //                      VK_INDEX_TYPE_UINT32 );
 
         // Bind uniform buffer(s)
-        vkCmdBindDescriptorSets( this->commandBuffers[i].id,
-                                 VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                 //this->pipelineLayout,
-                                 this->descriptorSetLayout.getPipelineLayout(),
-                                 0,
-                                 1,
-                                 &this->descriptorSet,
-                                 0,
-                                 nullptr );
+        cmdbuf.bindDescriptorSets( VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                   this->graphicsPipeline,
+                                   this->descriptorSetLayout,
+                                   0,
+                                   1,
+                                   &this->descriptorSet,
+                                   0,
+                                   nullptr );
+        //vkCmdBindDescriptorSets( this->commandBuffers[i].id,
+        //                         VK_PIPELINE_BIND_POINT_GRAPHICS,
+        //                         //this->pipelineLayout,
+        //                         this->descriptorSetLayout.getPipelineLayout(),
+        //                         0,
+        //                         1,
+        //                         &this->descriptorSet,
+        //                         0,
+        //                         nullptr );
       
-        vkCmdDrawIndexed( this->commandBuffers[i].id,
-                          this->model.indexSize,
-                          1, 0, 0, 0 );
+        cmdbuf.drawIndexed( this->model.indexSize, 1, 0, 0, 0 );
+        //vkCmdDrawIndexed( this->commandBuffers[i].id,
+        //                  this->model.indexSize,
+        //                  1, 0, 0, 0 );
 
-        vkCmdEndRenderPass( this->commandBuffers[i].id );
+        cmdbuf.endRenderPass();
+        //vkCmdEndRenderPass( this->commandBuffers[i].id );
 
-        this->commandBuffers[i].end();
+        cmdbuf.end();
+        //this->commandBuffers[i].end();
     }
 }
 
@@ -476,6 +519,7 @@ void VulkanApplication::createSemaphores()
                                         &this->renderFinishSemaphore ) );
 }
 
+#if defined( DEBUG_BUILD )
 VkBool32 VulkanApplication::debugCallback(
     VkDebugReportFlagsEXT      flags,
     VkDebugReportObjectTypeEXT objType,
@@ -507,3 +551,4 @@ void VulkanApplication::createDebugCallback()
                                                    nullptr,
                                                    &this->callback ) );
 }
+#endif

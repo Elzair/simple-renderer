@@ -38,7 +38,7 @@ public:
         this->init( device, queue, queueIdx );
     }
 
-    ~CommandPool(  ) { this->deinit(); }
+    //~CommandPool(  ) { this->deinit(); }
 
     void init( Device*  device,
                VkQueue  queue,
