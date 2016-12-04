@@ -406,6 +406,7 @@ void VulkanApplication::createCommandBuffers()
     //                              this->swapchain.framebuffers.size() );
     this->commandPool.reset();
     this->commandBuffers.resize( this->swapchain.framebuffers.size() );
+
     for ( auto& cmdbuf : this->commandBuffers )
     {
         cmdbuf.deinit();
@@ -428,7 +429,7 @@ void VulkanApplication::createCommandBuffers()
         clearValues[1].depthStencil = { 1.0f, 0 };
         
         cmdbuf.beginRenderPass( this->renderPass,
-                                this->swapchain.framebuffers[ ii ],
+                                this->swapchain.framebuffers[ ii++ ],
                                 renderArea,
                                 clearValues,
                                 VK_SUBPASS_CONTENTS_INLINE );
