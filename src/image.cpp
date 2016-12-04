@@ -59,6 +59,7 @@ void Image::init( VkPhysicalDevice physical,
 
     VK_CHECK_RESULT( this->device->createImage( &imageInfo,
                                                 &this->id ) );
+    std::cout << "Created image!" << std::endl;
 
     VkMemoryRequirements memRequirements;
     this->device->getImageMemoryRequirements( this->id,
@@ -73,8 +74,10 @@ void Image::init( VkPhysicalDevice physical,
     
     VK_CHECK_RESULT( this->device->allocateMemory( &allocInfo,
                                                    &this->memory ) );
+    std::cout << "Allocated memory!" << std::endl;
 
     this->device->bindImageMemory( this->id, this->memory, 0 );
+    std::cout << "Bound memory!" << std::endl;
 
     if ( this->type == ImageType::COLOR )
     {
@@ -139,11 +142,16 @@ void Image::init( VkPhysicalDevice physical,
     }
 
     // Transition image to final layout
+    std::cout << "Beginning layout transition!" << std::endl;
     this->transitionLayout( this->id, initialLayout, finalLayout, type );
+    std::cout << "Layout transitioned!" << std::endl;
 
     // Create Image View
+    std::cout << "Creating Image View!" << std::endl;
     this->createView( aspectFlags );
+    std::cout << "Image View created!" << std::endl;
 }
+
 void Image::deinit(  )
 {
     if ( this->view != VK_NULL_HANDLE )
@@ -182,6 +190,8 @@ void Image::transitionLayout( VkImage       image,
                               VkImageLayout newLayout,
                               ImageType     type )
 {
+    std::cout << "Transitioning Layout!" << std::endl;
+    
     CommandBuffer commandBuffer( this->device,
                                  this->queue,
                                  this->commandPool );
@@ -254,6 +264,8 @@ void Image::transitionLayout( VkImage       image,
                           &barrier );
 
     commandBuffer.end();
+
+    std::cout << "Submitting Buffer!" << std::endl;
     
     VkSubmitInfo submitInfo = {};
     submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
