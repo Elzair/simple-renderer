@@ -8,7 +8,7 @@
 void Texture::init( VkPhysicalDevice physical,
                     Device*          device,
                     VkQueue          queue,
-                    VkCommandPool    commandPool,
+                    CommandPool*     commandPool,
                     std::string      fileName )
 {
     // Load image from file

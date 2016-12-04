@@ -5,7 +5,7 @@
 void Buffer::init( VkPhysicalDevice physical,
                    Device*          device,
                    VkQueue          queue,
-                   VkCommandPool    commandPool,
+                   CommandPool*     commandPool,
                    VkDeviceSize     size,
                    BufferUsage      usage )
 {
@@ -107,7 +107,19 @@ void Buffer::copy( void*       data,
                          &copyRegion );
 
         commandBuffer.end();
-        commandBuffer.submit();
+
+        //commandBuffer.submit();
+        VkSubmitInfo submitInfo = {};
+        submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers    = &commandBuffer.id;
+        VK_CHECK_RESULT( vkQueueSubmit( this->queue,
+                                        1,
+                                        &submitInfo,
+                                        VK_NULL_HANDLE ) );
+        this->device->queueWaitIdle( this->queue );
+
+        commandBuffer.deinit();
     }
 }
 

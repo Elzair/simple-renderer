@@ -4,6 +4,8 @@
 #include "device.hpp"
 #include "utils.hpp"
 
+class CommandPool;
+
 enum BufferUsage
 {
     VERTEX,
@@ -21,7 +23,7 @@ public:
     Buffer( VkPhysicalDevice physical,
             Device*          device,
             VkQueue          queue,
-            VkCommandPool    commandPool,
+            CommandPool*     commandPool,
             VkDeviceSize     size,
             BufferUsage      usage )
     {
@@ -35,7 +37,7 @@ public:
     void init( VkPhysicalDevice physical,
                Device*          device,
                VkQueue          queue,
-               VkCommandPool    commandPool,
+               CommandPool*     commandPool,
                VkDeviceSize     size,
                BufferUsage      usage );
 
@@ -53,7 +55,8 @@ private:
 
     VkPhysicalDevice physical      = VK_NULL_HANDLE;
     VkQueue          queue         = VK_NULL_HANDLE;
-    VkCommandPool    commandPool   = VK_NULL_HANDLE;
+    //VkCommandPool    commandPool   = VK_NULL_HANDLE;
+    CommandPool*     commandPool   = nullptr;
     VkDeviceSize     size          = 0;
     bool             initialized   = false;
 

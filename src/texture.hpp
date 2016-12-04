@@ -16,7 +16,7 @@ public:
     Texture( VkPhysicalDevice physical,
              Device*          device,
              VkQueue          queue,
-             VkCommandPool    commandPool,
+             CommandPool*     commandPool,
              std::string      fileName )
     {
         this->init( physical, device, queue, commandPool, fileName );
@@ -29,7 +29,7 @@ public:
     void init( VkPhysicalDevice physical,
                Device*          device,
                VkQueue          queue,
-               VkCommandPool    commandPool,
+               CommandPool*     commandPool,
                std::string      fileName );
 
     void deinit();

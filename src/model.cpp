@@ -60,7 +60,7 @@ bool Vertex::operator==( const Vertex& other ) const
 void Model::init( VkPhysicalDevice physical,
                   Device*          device,
                   VkQueue          queue,
-                  VkCommandPool    commandPool,
+                  CommandPool*     commandPool,
                   std::string      fileName )
 {
     tinyobj::attrib_t                attrib;

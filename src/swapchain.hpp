@@ -9,6 +9,8 @@
 #include "image.hpp"
 #include "utils.hpp"
 
+class Image;
+
 class SwapChain
 {
 public:

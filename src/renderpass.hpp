@@ -5,6 +5,8 @@
 
 class RenderPass
 {
+    friend class CommandBuffer;
+    
 public:
     
     RenderPass() {} 

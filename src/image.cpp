@@ -6,7 +6,7 @@
 void Image::init( VkPhysicalDevice physical,
                   Device*          device,
                   VkQueue          queue,
-                  VkCommandPool    commandPool,
+                  CommandPool*     commandPool,
                   uint32_t         width,
                   uint32_t         height,
                   VkFormat         format,
@@ -126,10 +126,12 @@ void Image::init( VkPhysicalDevice physical,
         // Optimize image layouts
         this->transitionLayout( staging,
                                 VK_IMAGE_LAYOUT_PREINITIALIZED,
-                                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL );
+                                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                                type );
         this->transitionLayout( this->id,
                                 initialLayout,
-                                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL );
+                                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                type );
         initialLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 
         // Copy image from staging area to device memory
@@ -137,7 +139,7 @@ void Image::init( VkPhysicalDevice physical,
     }
 
     // Transition image to final layout
-    this->transitionLayout( this->id, initialLayout, finalLayout );
+    this->transitionLayout( this->id, initialLayout, finalLayout, type );
 
     // Create Image View
     this->createView( aspectFlags );
@@ -177,7 +179,8 @@ void Image::createView( VkImageAspectFlags aspectFlags )
 
 void Image::transitionLayout( VkImage       image,
                               VkImageLayout oldLayout,
-                              VkImageLayout newLayout )
+                              VkImageLayout newLayout,
+                              ImageType     type )
 {
     CommandBuffer commandBuffer( this->device,
                                  this->queue,
@@ -192,7 +195,14 @@ void Image::transitionLayout( VkImage       image,
     barrier.srcQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
     barrier.dstQueueFamilyIndex             = VK_QUEUE_FAMILY_IGNORED;
     barrier.image                           = image;
-    barrier.subresourceRange.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+    if ( type == ImageType::COLOR )
+    {
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    }
+    else if ( type == ImageType::DEPTH )
+    {
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+    }
     barrier.subresourceRange.baseMipLevel   = 0;
     barrier.subresourceRange.levelCount     = 1;
     barrier.subresourceRange.baseArrayLayer = 0;
@@ -244,7 +254,18 @@ void Image::transitionLayout( VkImage       image,
                           &barrier );
 
     commandBuffer.end();
-    commandBuffer.submit();
+    
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers    = &commandBuffer.id;
+    VK_CHECK_RESULT( vkQueueSubmit( this->queue,
+                                    1,
+                                    &submitInfo,
+                                    VK_NULL_HANDLE ) );
+    this->device->queueWaitIdle( this->queue );
+
+    commandBuffer.deinit();
 }
 
 void Image::copy( VkImage src )
@@ -274,7 +295,19 @@ void Image::copy( VkImage src )
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     1,
                     &region );
+    this->device->queueWaitIdle( this->queue );
 
     commandBuffer.end();
-    commandBuffer.submit();
+    
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers    = &commandBuffer.id;
+    VK_CHECK_RESULT( vkQueueSubmit( this->queue,
+                                    1,
+                                    &submitInfo,
+                                    VK_NULL_HANDLE ) );
+    this->device->queueWaitIdle( this->queue );
+
+    commandBuffer.deinit();
 }

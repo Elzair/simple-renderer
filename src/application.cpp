@@ -22,7 +22,8 @@ VulkanApplication::~VulkanApplication()
     this->model.deinit();
     this->texture.deinit();
     this->depth.deinit();
-    this->device.destroyCommandPool( this->commandPool );
+    //this->device.destroyCommandPool( this->commandPool );
+    this->commandPool.deinit();
     this->graphicsPipeline.deinit();
     this->descriptorSetLayout.deinit();
     this->renderPass.deinit();
@@ -101,7 +102,7 @@ void VulkanApplication::initVulkan( int width, int height )
     this->depth.init( this->physical,
                       &this->device,
                       this->device.graphicsQueue,
-                      this->commandPool,
+                      &this->commandPool,
                       this->swapchain.extent.width,
                       this->swapchain.extent.height,
                       FindDepthFormat( this->physical ),
@@ -116,21 +117,21 @@ void VulkanApplication::initVulkan( int width, int height )
     this->texture.init( this->physical,
                         &this->device,
                         this->device.graphicsQueue,
-                        this->commandPool,
+                        &this->commandPool,
                         TEXTURE_PATH );
     std::cout << "Created Texture!" << std::endl;
 
     this->model.init( this->physical,
                       &this->device,
                       this->device.graphicsQueue,
-                      this->commandPool,
+                      &this->commandPool,
                       MODEL_PATH );
     std::cout << "Loaded model!" << std::endl;
 
     this->uniform.init( this->physical,
                         &this->device,
                         this->device.graphicsQueue,
-                        this->commandPool,
+                        &this->commandPool,
                         sizeof(UniformBufferObject),
                         BufferUsage::UNIFORM );
     std::cout << "Created Uniform Buffer!" << std::endl;
@@ -178,7 +179,7 @@ void VulkanApplication::recreateSwapChain( int width, int height )
     this->depth.init( this->physical,
                       &this->device,
                       this->device.graphicsQueue,
-                      this->commandPool,
+                      &this->commandPool,
                       this->swapchain.extent.width,
                       this->swapchain.extent.height,
                       FindDepthFormat( this->physical ),
@@ -323,15 +324,18 @@ void VulkanApplication::createGraphicsPipeline(  )
 
 void VulkanApplication::createCommandPool()
 {
-    VkCommandPoolCreateInfo poolCreateInfo = {};
-    poolCreateInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolCreateInfo.queueFamilyIndex = this->device.graphicsQueueIdx; 
-    poolCreateInfo.flags            = 0;
+    //VkCommandPoolCreateInfo poolCreateInfo = {};
+    //poolCreateInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    //poolCreateInfo.queueFamilyIndex = this->device.graphicsQueueIdx; 
+    //poolCreateInfo.flags            = 0;
 
-    VK_CHECK_RESULT( vkCreateCommandPool( this->device.id,
-                                          &poolCreateInfo,
-                                          nullptr,
-                                          &this->commandPool ) );
+    //VK_CHECK_RESULT( vkCreateCommandPool( this->device.id,
+    //                                      &poolCreateInfo,
+    //                                      nullptr,
+    //                                      &this->commandPool ) );
+    this->commandPool.init( &this->device,
+                            this->device.graphicsQueue,
+                            this->device.graphicsQueueIdx );
 }
 
 void VulkanApplication::createDescriptorPool()
@@ -386,10 +390,17 @@ void VulkanApplication::createDescriptorSet()
 void VulkanApplication::createCommandBuffers()
 {
     // Free old command buffers (if called from recreateSwapChain())
-    this->commandBuffers.refresh( &this->device,
-                                  this->device.graphicsQueue,
-                                  this->commandPool,
-                                  this->swapchain.framebuffers.size() );
+    //this->commandBuffers.refresh( &this->device,
+    //                              this->device.graphicsQueue,
+    //                              this->commandPool,
+    //                              this->swapchain.framebuffers.size() );
+    for ( auto& cmdbuf : this->commandBuffers )
+    {
+        cmdbuf.deinit();
+        cmdbuf.init( &this->device,
+                     this->device.graphicsQueue,
+                     &this->commandPool );
+    }
 
     for ( size_t i = 0; i < this->commandBuffers.size(); i++ )
     {

@@ -6,6 +6,8 @@
 #include "device.hpp"
 #include "commandbuffer.hpp"
 
+class CommandPool;
+
 enum ImageType {
     COLOR,
     DEPTH
@@ -22,7 +24,7 @@ public:
     Image( VkPhysicalDevice physical,
            Device*          device,
            VkQueue          queue,
-           VkCommandPool    commandPool,
+           CommandPool*     commandPool,
            uint32_t         width,
            uint32_t         height,
            VkFormat         format,
@@ -41,7 +43,7 @@ public:
     void init( VkPhysicalDevice physical,
                Device*          device,
                VkQueue          queue,
-               VkCommandPool    commandPool,
+               CommandPool*     commandPool,
                uint32_t         width,
                uint32_t         height,
                VkFormat         format,
@@ -55,7 +57,7 @@ protected:
 
     Device*        device      = nullptr;
     VkQueue        queue       = VK_NULL_HANDLE;
-    VkCommandPool  commandPool = VK_NULL_HANDLE;
+    CommandPool*   commandPool = nullptr;
     uint32_t       width;
     uint32_t       height;
     VkFormat       format;
@@ -65,7 +67,8 @@ protected:
 
     void transitionLayout( VkImage       image,
                            VkImageLayout oldLayout,
-                           VkImageLayout newLayout );
+                           VkImageLayout newLayout,
+                           ImageType     type );
 
     void copy( VkImage src );
 };

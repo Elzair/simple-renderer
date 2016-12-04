@@ -60,7 +60,8 @@ private:
     //VkPipeline                graphicsPipeline = VK_NULL_HANDLE;
     GraphicsPipeline          graphicsPipeline;
 
-    VkCommandPool             commandPool = VK_NULL_HANDLE;
+    //VkCommandPool             commandPool = VK_NULL_HANDLE;
+    CommandPool               commandPool;
 
     Image                     depth;
 
@@ -73,7 +74,8 @@ private:
     ResourcePool              descriptorPool;
     VkDescriptorSet           descriptorSet; // Freed when descriptorPool is destroyed
 
-    CommandBuffers            commandBuffers;
+    //CommandBuffers            commandBuffers;
+    std::vector<CommandBuffer> commandBuffers;
 
     VkSemaphore               imageAvailableSemaphore = VK_NULL_HANDLE;
     VkSemaphore               renderFinishSemaphore   = VK_NULL_HANDLE;

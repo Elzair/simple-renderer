@@ -7,6 +7,8 @@
 #include "shader.hpp"
 #include "swapchain.hpp"
 
+class SwapChain;
+
 struct ScreenDimensions
 {
     uint32_t width;
@@ -15,6 +17,8 @@ struct ScreenDimensions
 
 class GraphicsPipeline
 {
+    friend class CommandBuffer;
+    
 public:
 
     GraphicsPipeline() {}

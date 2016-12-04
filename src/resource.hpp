@@ -40,6 +40,8 @@ struct ResourceInfo
 
 class ResourceLayoutContainer
 {
+    friend class CommandBuffer;
+
 public:
 
     ResourceLayoutContainer() {}
