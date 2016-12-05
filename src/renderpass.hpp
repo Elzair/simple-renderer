@@ -16,7 +16,7 @@ public:
         this->init( device, physical, imageFormat );
     }
 
-    ~RenderPass(  ) { this->deinit(); }
+    ~RenderPass() { this->deinit(); }
 
     void init( Device* device, VkPhysicalDevice physical, VkFormat imageFormat );
 

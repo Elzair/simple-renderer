@@ -27,8 +27,6 @@ class CommandPool
     
 public:
 
-    VkCommandPool pool   = VK_NULL_HANDLE;
-
     CommandPool() {}
 
     CommandPool( Device*  device,
@@ -38,7 +36,7 @@ public:
         this->init( device, queue, queueIdx );
     }
 
-    //~CommandPool(  ) { this->deinit(); }
+    ~CommandPool(  ) { this->deinit(); }
 
     void init( Device*  device,
                VkQueue  queue,
@@ -50,12 +48,9 @@ public:
 
     CommandBuffer allocateCommandBuffer();
 
-
-    //TODO: Remove when other cmdbuf methods have been added
-    VkCommandPool getCommandPool() const;
-
 private:
 
+    VkCommandPool id     = VK_NULL_HANDLE;
     Device*       device = nullptr;
     VkQueue       queue  = VK_NULL_HANDLE;
 
@@ -70,8 +65,6 @@ class CommandBuffer
     friend class Image;
     
 public:
-
-    VkCommandBuffer id = VK_NULL_HANDLE;
 
     CommandBuffer() {}
 
@@ -114,7 +107,6 @@ public:
     // Basic Commands
     void begin( CommandBufferUsage usage = CommandBufferUsage::SIMULTANEOUS_USE );
     void end();
-    void free();
 
     // RenderPass Commands
     void beginRenderPass( RenderPass&              renderPass,
@@ -259,6 +251,17 @@ public:
     void dispatch( uint32_t x, uint32_t y, uint32_t z );
     void dispatchIndirect( VkBuffer buffer, VkDeviceSize offset );
 
+    // Synchronization Commands
+    void pipelineBarrier( VkPipelineStageFlags         srcStageMask,
+                          VkPipelineStageFlags         dstStageMask,
+                          VkDependencyFlags            dependencyFlags,
+                          uint32_t                     memoryBarrierCount,
+                          const VkMemoryBarrier*       pMemoryBarriers,
+                          uint32_t                     bufferMemoryBarrierCount,
+                          const VkBufferMemoryBarrier* pBufferMemoryBarriers,
+                          uint32_t                     imageMemoryBarrierCount,
+                          const VkImageMemoryBarrier*  pImageMemoryBarriers );
+
     // PushConstant Commands
     void pushConstants( VkPipelineLayout   layout,
                         VkShaderStageFlags stageFlags,
@@ -267,15 +270,15 @@ public:
                         const void*        pValues );
 
     //TODO: Remove when other cmdbuf methods have been added
-    VkCommandBuffer getCommandBuffer();
+    VkCommandBuffer* getHandle();
 
 private:
 
-    Device*         device      = nullptr;
-    VkQueue         queue       = VK_NULL_HANDLE;
-    CommandPool*    pool        = nullptr;
-    //VkCommandBuffer id          = VK_NULL_HANDLE;
-    bool            began       = false;
-    bool            renderPass  = false;
-    bool            ended       = false;
+    VkCommandBuffer id         = VK_NULL_HANDLE;
+    Device*         device     = nullptr;
+    VkQueue         queue      = VK_NULL_HANDLE;
+    CommandPool*    pool       = nullptr;
+    bool            began      = false;
+    bool            renderPass = false;
+    bool            ended      = false;
 };

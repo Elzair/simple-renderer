@@ -243,16 +243,15 @@ void Image::transitionLayout( VkImage       image,
         assert( 0 );
     }
 
-    vkCmdPipelineBarrier( commandBuffer.id,
-                          VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                          VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                          0,
-                          0,
-                          nullptr,
-                          0,
-                          nullptr,
-                          1,
-                          &barrier );
+    commandBuffer.pipelineBarrier( VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                   VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                   0,
+                                   0,
+                                   nullptr,
+                                   0,
+                                   nullptr,
+                                   1,
+                                   &barrier );
 
     commandBuffer.end();
 
@@ -292,13 +291,12 @@ void Image::copy( VkImage src )
     region.extent.height  = this->height;
     region.extent.depth   = 1;
 
-    vkCmdCopyImage( commandBuffer.id,
-                    src,
-                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                    this->id,
-                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                    1,
-                    &region );
+    commandBuffer.copyImage( src,
+                             VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                             this->id,
+                             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                             1,
+                             &region );
 
     commandBuffer.end();
 

@@ -100,11 +100,8 @@ void Buffer::copy( void*       data,
         copyRegion.srcOffset = 0;
         copyRegion.dstOffset = 0;
         copyRegion.size      = size;
-        vkCmdCopyBuffer( commandBuffer.id,
-                         this->staging,
-                         this->id,
-                         1,
-                         &copyRegion );
+
+        commandBuffer.copyBuffer( this->staging, this->id, 1, &copyRegion );
 
         commandBuffer.end();
 

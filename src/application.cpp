@@ -253,15 +253,15 @@ void VulkanApplication::drawFrame()
     submitInfo.pWaitSemaphores      = waitSemaphores;
     submitInfo.pWaitDstStageMask    = waitStages;
     submitInfo.commandBufferCount   = 1;
-    submitInfo.pCommandBuffers      = &this->commandBuffers[imageIdx].id;
+    submitInfo.pCommandBuffers      = this->commandBuffers[imageIdx].getHandle();
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores    = signalSemaphores;
 
     this->device.queueWaitIdle( this->device.graphicsQueue );
-    VK_CHECK_RESULT( vkQueueSubmit( this->device.graphicsQueue,
-                                    1,
-                                    &submitInfo,
-                                    VK_NULL_HANDLE ) );
+    VK_CHECK_RESULT( this->device.queueSubmit( this->device.graphicsQueue,
+                                               1,
+                                               &submitInfo,
+                                               VK_NULL_HANDLE ) );
 
     // Submit result to swap chain
     VkSwapchainKHR swapchains[] = { this->swapchain.id };
@@ -334,15 +334,6 @@ void VulkanApplication::createGraphicsPipeline(  )
 
 void VulkanApplication::createCommandPool()
 {
-    //VkCommandPoolCreateInfo poolCreateInfo = {};
-    //poolCreateInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    //poolCreateInfo.queueFamilyIndex = this->device.graphicsQueueIdx; 
-    //poolCreateInfo.flags            = 0;
-
-    //VK_CHECK_RESULT( vkCreateCommandPool( this->device.id,
-    //                                      &poolCreateInfo,
-    //                                      nullptr,
-    //                                      &this->commandPool ) );
     this->commandPool.init( &this->device,
                             this->device.graphicsQueue,
                             this->device.graphicsQueueIdx );
@@ -399,11 +390,6 @@ void VulkanApplication::createDescriptorSet()
 
 void VulkanApplication::createCommandBuffers()
 {
-    // Free old command buffers (if called from recreateSwapChain())
-    //this->commandBuffers.refresh( &this->device,
-    //                              this->device.graphicsQueue,
-    //                              this->commandPool,
-    //                              this->swapchain.framebuffers.size() );
     this->commandPool.reset();
     this->commandBuffers.resize( this->swapchain.framebuffers.size() );
 
@@ -434,44 +420,14 @@ void VulkanApplication::createCommandBuffers()
                                 clearValues,
                                 VK_SUBPASS_CONTENTS_INLINE );
 
-        //std::array<VkClearValue, 2> clearValues = {};
-        //clearValues[0].color        = { 0.0f, 0.0f, 0.0f, 1.0f };
-        //clearValues[1].depthStencil = { 1.0f, 0 };
-      
-        //VkRenderPassBeginInfo renderPassCreateInfo = {};
-        //renderPassCreateInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        //renderPassCreateInfo.renderPass        = this->renderPass.getRenderPass();
-        //renderPassCreateInfo.framebuffer       = this->swapchain.framebuffers[i];
-        //renderPassCreateInfo.renderArea.offset = {0, 0};
-        //renderPassCreateInfo.renderArea.extent = this->swapchain.extent;
-        //renderPassCreateInfo.clearValueCount   = clearValues.size();
-        //renderPassCreateInfo.pClearValues      = clearValues.data();
-
-        //vkCmdBeginRenderPass( this->commandBuffers[i].id,
-        //                      &renderPassCreateInfo,
-        //                      VK_SUBPASS_CONTENTS_INLINE );
-
         // Bind Pipeline
         cmdbuf.bindPipeline( VK_PIPELINE_BIND_POINT_GRAPHICS, this->graphicsPipeline );
 
-        //vkCmdBindPipeline( this->commandBuffers[i].id,
-        //                   VK_PIPELINE_BIND_POINT_GRAPHICS,
-        //                   this->graphicsPipeline.getPipeline() );
-
         // Bind Vertex Buffer
         cmdbuf.bindVertexBuffer( 0, this->model.vertexBuffer, 0 );
-        //VkBuffer     vertexBuffers[] = { this->model.vertexBuffer.id };
-        //VkDeviceSize offsets[]       = { 0 };
-        //vkCmdBindVertexBuffers( this->commandBuffers[i].id, 0, 1,
-        //                        vertexBuffers, offsets );
 
         // Bind Index Buffer
         cmdbuf.bindIndexBuffer( this->model.indexBuffer, 0, VK_INDEX_TYPE_UINT32 );
-        
-        //vkCmdBindIndexBuffer( this->commandBuffers[i].id,
-        //                      this->model.indexBuffer.id,
-        //                      0,
-        //                      VK_INDEX_TYPE_UINT32 );
 
         // Bind uniform buffer(s)
         cmdbuf.bindDescriptorSets( VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -482,26 +438,12 @@ void VulkanApplication::createCommandBuffers()
                                    &this->descriptorSet,
                                    0,
                                    nullptr );
-        //vkCmdBindDescriptorSets( this->commandBuffers[i].id,
-        //                         VK_PIPELINE_BIND_POINT_GRAPHICS,
-        //                         //this->pipelineLayout,
-        //                         this->descriptorSetLayout.getPipelineLayout(),
-        //                         0,
-        //                         1,
-        //                         &this->descriptorSet,
-        //                         0,
-        //                         nullptr );
       
         cmdbuf.drawIndexed( this->model.indexSize, 1, 0, 0, 0 );
-        //vkCmdDrawIndexed( this->commandBuffers[i].id,
-        //                  this->model.indexSize,
-        //                  1, 0, 0, 0 );
 
         cmdbuf.endRenderPass();
-        //vkCmdEndRenderPass( this->commandBuffers[i].id );
 
         cmdbuf.end();
-        //this->commandBuffers[i].end();
     }
 }
 
