@@ -165,12 +165,14 @@ void VulkanApplication::mainLoop()
     }
 
     // Wait for logical device to finish
-    vkDeviceWaitIdle( this->device.id );
+    //vkDeviceWaitIdle( this->device.id );
+    this->device.waitIdle();
 }
 
 void VulkanApplication::recreateSwapChain( int width, int height )
 {
-    vkDeviceWaitIdle( this->device.id );
+    //vkDeviceWaitIdle( this->device.id );
+    this->device.waitIdle();
     this->width  = width;
     this->height = height;
 
@@ -229,12 +231,14 @@ void VulkanApplication::updateUniformBuffer()
 void VulkanApplication::drawFrame()
 {
     uint32_t imageIdx;
-    auto result = vkAcquireNextImageKHR( this->device.id,
-                                         this->swapchain.id,
-                                         std::numeric_limits<uint64_t>::max(), // Disable timeout for image to become available
-                                         this->imageAvailableSemaphore,
-                                         VK_NULL_HANDLE,
-                                         &imageIdx );
+    auto result = this->device.acquireNextImage(
+        this->swapchain.id,
+        std::numeric_limits<uint64_t>::max(), // Disable timeout for image to become available
+        this->imageAvailableSemaphore,
+        VK_NULL_HANDLE,
+        &imageIdx
+        );
+
     if ( result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR )
     {
         this->recreateSwapChain( this->width, this->height );
@@ -275,7 +279,7 @@ void VulkanApplication::drawFrame()
     presentInfo.pImageIndices      = &imageIdx;
     presentInfo.pResults           = nullptr;
 
-    vkQueuePresentKHR( this->device.presentQueue, &presentInfo );
+    this->device.queuePresent( this->device.presentQueue, &presentInfo );
 }
 
 void VulkanApplication::createSurface()
@@ -381,11 +385,15 @@ void VulkanApplication::createDescriptorSet()
     descriptorWrites[1].descriptorCount = 1;
     descriptorWrites[1].pImageInfo      = &imageInfo;
 
-    vkUpdateDescriptorSets( this->device.id,
-                            descriptorWrites.size(),
-                            descriptorWrites.data(),
-                            0,
-                            nullptr );
+    //vkUpdateDescriptorSets( this->device.id,
+    //                        descriptorWrites.size(),
+    //                        descriptorWrites.data(),
+    //                        0,
+    //                        nullptr );
+    this->device.updateDescriptorSets( descriptorWrites.size(),
+                                       descriptorWrites.data(),
+                                       0,
+                                       nullptr );
 }
 
 void VulkanApplication::createCommandBuffers()
@@ -452,14 +460,14 @@ void VulkanApplication::createSemaphores()
     VkSemaphoreCreateInfo semaphoreCreateInfo = {};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-    VK_CHECK_RESULT( vkCreateSemaphore( this->device.id,
-                                        &semaphoreCreateInfo,
-                                        nullptr,
-                                        &this->imageAvailableSemaphore ) );
-    VK_CHECK_RESULT( vkCreateSemaphore( this->device.id,
-                                        &semaphoreCreateInfo,
-                                        nullptr,
-                                        &this->renderFinishSemaphore ) );
+    VK_CHECK_RESULT( this->device.createSemaphore(
+                         &semaphoreCreateInfo,
+                         &this->imageAvailableSemaphore
+                         ) );
+    VK_CHECK_RESULT( this->device.createSemaphore(
+                         &semaphoreCreateInfo,
+                         &this->renderFinishSemaphore
+                         ) );
 }
 
 #if defined( DEBUG_BUILD )
