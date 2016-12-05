@@ -171,8 +171,8 @@ void VulkanApplication::mainLoop()
 
 void VulkanApplication::recreateSwapChain( int width, int height )
 {
-    //vkDeviceWaitIdle( this->device.id );
     this->device.waitIdle();
+
     this->width  = width;
     this->height = height;
 

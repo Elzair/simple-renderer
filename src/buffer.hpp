@@ -51,11 +51,10 @@ private:
 
     VkBuffer         staging       = VK_NULL_HANDLE;
     VkDeviceMemory   stagingMemory = VK_NULL_HANDLE;
-    Device*          device        = nullptr;
 
+    Device*          device        = nullptr;
     VkPhysicalDevice physical      = VK_NULL_HANDLE;
     VkQueue          queue         = VK_NULL_HANDLE;
-    //VkCommandPool    commandPool   = VK_NULL_HANDLE;
     CommandPool*     commandPool   = nullptr;
     VkDeviceSize     size          = 0;
     bool             initialized   = false;

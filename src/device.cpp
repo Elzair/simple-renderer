@@ -24,7 +24,7 @@ void Device::init( VkPhysicalDevice               physical,
     for ( int queueFamily : uniqueQueueFamilies )
     {
         VkDeviceQueueCreateInfo queueCreateInfo = {};
-        queueCreateInfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueCreateInfo.queueFamilyIndex = queueFamily;
         queueCreateInfo.queueCount       = 1;
         queueCreateInfo.pQueuePriorities = &queuePriority;
@@ -110,38 +110,6 @@ VkResult Device::queuePresent( VkQueue                 queue,
     return vkQueuePresentKHR( queue, pPresentInfo );
 }
 
-// Command Buffer Methods
-
-VkResult Device::createCommandPool( const VkCommandPoolCreateInfo* pCreateInfo,
-                                    VkCommandPool*                 pCommandPool )
-{
-    return vkCreateCommandPool( this->id, pCreateInfo, nullptr, pCommandPool );
-}
-
-VkResult Device::resetCommandPool( VkCommandPool           commandPool,
-                                   VkCommandPoolResetFlags flags )
-{
-    return vkResetCommandPool( this->id, commandPool, flags );
-}
-
-void Device::destroyCommandPool( VkCommandPool commandPool )
-{
-    vkDestroyCommandPool( this->id, commandPool, nullptr );
-}
-
-VkResult Device::allocateCommandBuffers( const VkCommandBufferAllocateInfo* pAllocateInfo,
-                                         VkCommandBuffer*                   pCommandBuffers )
-{
-    return vkAllocateCommandBuffers( this->id, pAllocateInfo, pCommandBuffers );
-}
-
-void Device::freeCommandBuffers( VkCommandPool          commandPool,
-                                 uint32_t               commandBufferCount,
-                                 const VkCommandBuffer* pCommandBuffers )
-{
-    vkFreeCommandBuffers( this->id, commandPool, commandBufferCount, pCommandBuffers );
-}
-
 // Semaphore Methods
 
 VkResult Device::createSemaphore( const VkSemaphoreCreateInfo* pCreateInfo,
@@ -155,6 +123,133 @@ void Device::destroySemaphore( VkSemaphore semaphore )
     vkDestroySemaphore( this->id, semaphore, nullptr );
 }
 
+// Descriptor Methods
+
+VkResult Device::createDescriptorSetLayout(
+    const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
+    VkDescriptorSetLayout*                 pSetLayout
+    )
+{
+    return vkCreateDescriptorSetLayout( this->id,
+                                        pCreateInfo,
+                                        nullptr,
+                                        pSetLayout );
+}
+
+void Device::destroyDescriptorSetLayout(
+    VkDescriptorSetLayout descriptorSetLayout
+    )
+{
+    vkDestroyDescriptorSetLayout( this->id, descriptorSetLayout, nullptr );
+}
+
+VkResult Device::createPipelineLayout(
+    const VkPipelineLayoutCreateInfo* pCreateInfo,
+    VkPipelineLayout*                 pPipelineLayout
+    )
+{
+    return vkCreatePipelineLayout( this->id,
+                                   pCreateInfo,
+                                   nullptr,
+                                   pPipelineLayout );
+}
+
+void Device::destroyPipelineLayout( VkPipelineLayout pipelineLayout )
+{
+    vkDestroyPipelineLayout( this->id, pipelineLayout, nullptr );
+}
+
+VkResult Device::createDescriptorPool(
+    const VkDescriptorPoolCreateInfo* pCreateInfo,
+    VkDescriptorPool*                 pDescriptorPool
+    )
+{
+    return vkCreateDescriptorPool( this->id,
+                                   pCreateInfo,
+                                   nullptr,
+                                   pDescriptorPool );
+}
+
+void Device::destroyDescriptorPool( VkDescriptorPool descriptorPool )
+{
+    vkDestroyDescriptorPool( this->id, descriptorPool, nullptr );
+}
+
+VkResult Device::allocateDescriptorSets(
+    const VkDescriptorSetAllocateInfo* pAllocateInfo,
+    VkDescriptorSet*                   pDescriptorSets
+    )
+{
+    return vkAllocateDescriptorSets( this->id, pAllocateInfo, pDescriptorSets );
+}
+
+VkResult Device::freeDescriptorSets( VkDescriptorPool       descriptorPool,
+                                     uint32_t               descriptorSetCount,
+                                     const VkDescriptorSet* pDescriptorSets )
+{
+    return vkFreeDescriptorSets( this->id,
+                                 descriptorPool,
+                                 descriptorSetCount,
+                                 pDescriptorSets );
+}
+
+VkResult Device::resetDescriptorPool( VkDescriptorPool           descriptorPool,
+                                      VkDescriptorPoolResetFlags flags )
+{
+    return vkResetDescriptorPool( this->id, descriptorPool, flags );
+}
+
+void Device::updateDescriptorSets(
+    uint32_t                    descriptorWriteCount,
+    const VkWriteDescriptorSet* pDescriptorWrites,
+    uint32_t                    descriptorCopyCount,
+    const VkCopyDescriptorSet*  pDescriptorCopies
+    )
+{
+    vkUpdateDescriptorSets( this->id, descriptorWriteCount, pDescriptorWrites,
+                            descriptorCopyCount, pDescriptorCopies );
+}
+
+// Swapchain Methods
+
+VkResult Device::createSwapchain( const VkSwapchainCreateInfoKHR* pCreateInfo,
+                                  VkSwapchainKHR*                 pSwapchain )
+{
+    return vkCreateSwapchainKHR( this->id, pCreateInfo, nullptr, pSwapchain );
+}
+
+void Device::destroySwapchain( VkSwapchainKHR swapchain )
+{
+    vkDestroySwapchainKHR( this->id, swapchain, nullptr );
+}
+
+VkResult Device::createSharedSwapchains(
+    uint32_t                        swapchainCount,
+    const VkSwapchainCreateInfoKHR* pCreateInfos,
+    VkSwapchainKHR*                 pSwapchains
+    )
+{
+    return vkCreateSharedSwapchainsKHR( this->id, swapchainCount,
+                                        pCreateInfos, nullptr, pSwapchains );
+}
+
+VkResult Device::getSwapchainImages( VkSwapchainKHR swapchain,
+                                     uint32_t*      pSwapchainImageCount,
+                                     VkImage*       pSwapchainImages )
+{
+    return vkGetSwapchainImagesKHR( this->id, swapchain,
+                                    pSwapchainImageCount, pSwapchainImages );
+}
+
+VkResult Device::acquireNextImage( VkSwapchainKHR swapchain,
+                                   uint64_t       timeout,
+                                   VkSemaphore    semaphore,
+                                   VkFence        fence,
+                                   uint32_t*      pImageIndex )
+{
+    return vkAcquireNextImageKHR( this->id, swapchain, timeout,
+                                  semaphore, fence, pImageIndex );
+}
 // Render Pass Methods
 
 VkResult Device::createRenderPass( const VkRenderPassCreateInfo* pCreateInfo,
@@ -181,8 +276,10 @@ void Device::destroyFramebuffer( VkFramebuffer framebuffer )
 }
 
 // Shader Methods
-VkResult Device::createShaderModule( const VkShaderModuleCreateInfo* pCreateInfo,
-                                     VkShaderModule*                 pShaderModule )
+VkResult Device::createShaderModule(
+    const VkShaderModuleCreateInfo* pCreateInfo,
+    VkShaderModule*                 pShaderModule
+    )
 {
     return vkCreateShaderModule( this->id, pCreateInfo, nullptr, pShaderModule );
 }
@@ -193,22 +290,34 @@ void Device::destroyShaderModule( VkShaderModule shaderModule )
 }
 
 // Pipeline Methods
-VkResult Device::createComputePipelines( VkPipelineCache                    pipelineCache,
-                                         uint32_t                           createInfoCount,
-                                         const VkComputePipelineCreateInfo* pCreateInfos,
-                                         VkPipeline*                        pPipelines )
+VkResult Device::createComputePipelines(
+    VkPipelineCache                    pipelineCache,
+    uint32_t                           createInfoCount,
+    const VkComputePipelineCreateInfo* pCreateInfos,
+    VkPipeline*                        pPipelines
+    )
 {
-    return vkCreateComputePipelines( this->id, pipelineCache, createInfoCount,
-                                     pCreateInfos, nullptr, pPipelines );
+    return vkCreateComputePipelines( this->id,
+                                     pipelineCache,
+                                     createInfoCount,
+                                     pCreateInfos,
+                                     nullptr,
+                                     pPipelines );
 }
 
-VkResult Device::createGraphicsPipelines( VkPipelineCache                    pipelineCache,
-                                          uint32_t                           createInfoCount,
-                                          const VkGraphicsPipelineCreateInfo* pCreateInfos,
-                                          VkPipeline*                        pPipelines )
+VkResult Device::createGraphicsPipelines(
+    VkPipelineCache                    pipelineCache,
+    uint32_t                           createInfoCount,
+    const VkGraphicsPipelineCreateInfo* pCreateInfos,
+    VkPipeline*                        pPipelines
+    )
 {
-    return vkCreateGraphicsPipelines( this->id, pipelineCache, createInfoCount,
-                                      pCreateInfos, nullptr, pPipelines );
+    return vkCreateGraphicsPipelines( this->id,
+                                      pipelineCache,
+                                      createInfoCount,
+                                      pCreateInfos,
+                                      nullptr,
+                                      pPipelines );
 }
 
 void Device::destroyPipeline( VkPipeline pipeline )
@@ -216,17 +325,25 @@ void Device::destroyPipeline( VkPipeline pipeline )
     vkDestroyPipeline( this->id, pipeline, nullptr );
 }
 
-VkResult Device::createPipelineCache( const VkPipelineCacheCreateInfo* pCreateInfo,
-                                      VkPipelineCache*                 pPipelineCache )
+VkResult Device::createPipelineCache(
+    const VkPipelineCacheCreateInfo* pCreateInfo,
+    VkPipelineCache*                 pPipelineCache
+    )
 {
-    return vkCreatePipelineCache( this->id, pCreateInfo, nullptr, pPipelineCache );
+    return vkCreatePipelineCache( this->id,
+                                  pCreateInfo,
+                                  nullptr,
+                                  pPipelineCache );
 }
 
 VkResult Device::mergePipelineCaches( VkPipelineCache        dstCache,
                                       uint32_t               srcCacheCount,
                                       const VkPipelineCache* pSrcCaches )
 {
-    return vkMergePipelineCaches( this->id, dstCache, srcCacheCount, pSrcCaches );
+    return vkMergePipelineCaches( this->id,
+                                  dstCache,
+                                  srcCacheCount,
+                                  pSrcCaches );
 }
 
 VkResult Device::getPipelineCacheData( VkPipelineCache pipelineCache,
@@ -263,16 +380,24 @@ VkResult Device::mapMemory( VkDeviceMemory   memory,
     return vkMapMemory( this->id, memory, offset, size, flags, ppData );
 }
 
-VkResult Device::flushMappedMemoryRanges( uint32_t                   memoryRangeCount,
-                                          const VkMappedMemoryRange* pMemoryRanges )
+VkResult Device::flushMappedMemoryRanges(
+    uint32_t                   memoryRangeCount,
+    const VkMappedMemoryRange* pMemoryRanges
+    )
 {
-    return vkFlushMappedMemoryRanges( this->id, memoryRangeCount, pMemoryRanges );
+    return vkFlushMappedMemoryRanges( this->id,
+                                      memoryRangeCount,
+                                      pMemoryRanges );
 }
 
-VkResult Device::invalidateMappedMemoryRanges( uint32_t                   memoryRangeCount,
-                                               const VkMappedMemoryRange* pMemoryRanges )
+VkResult Device::invalidateMappedMemoryRanges(
+    uint32_t                   memoryRangeCount,
+    const VkMappedMemoryRange* pMemoryRanges
+    )
 {
-    return vkInvalidateMappedMemoryRanges( this->id, memoryRangeCount, pMemoryRanges );
+    return vkInvalidateMappedMemoryRanges( this->id,
+                                           memoryRangeCount,
+                                           pMemoryRanges );
 }
 
 void Device::unmapMemory( VkDeviceMemory memory )
@@ -339,14 +464,18 @@ void Device::destroyImageView( VkImageView imageView )
     vkDestroyImageView( this->id, imageView, nullptr );
 }
 
-void Device::getBufferMemoryRequirements( VkBuffer              buffer,
-                                          VkMemoryRequirements* pMemoryRequirements )
+void Device::getBufferMemoryRequirements(
+    VkBuffer              buffer,
+    VkMemoryRequirements* pMemoryRequirements
+    )
 {
     vkGetBufferMemoryRequirements( this->id, buffer, pMemoryRequirements );
 }
 
-void Device::getImageMemoryRequirements( VkImage               image,
-                                         VkMemoryRequirements* pMemoryRequirements )
+void Device::getImageMemoryRequirements(
+    VkImage               image,
+    VkMemoryRequirements* pMemoryRequirements
+    )
 {
     vkGetImageMemoryRequirements( this->id, image, pMemoryRequirements );
 }
@@ -378,106 +507,39 @@ void Device::destroySampler( VkSampler sampler )
     vkDestroySampler( this->id, sampler, nullptr );
 }
 
-// Descriptor Methods
+// Command Buffer Methods
 
-VkResult Device::createDescriptorSetLayout( const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
-                                            VkDescriptorSetLayout*                 pSetLayout )
+VkResult Device::createCommandPool( const VkCommandPoolCreateInfo* pCreateInfo,
+                                    VkCommandPool*                 pCommandPool )
 {
-    return vkCreateDescriptorSetLayout( this->id, pCreateInfo, nullptr, pSetLayout );
+    return vkCreateCommandPool( this->id, pCreateInfo, nullptr, pCommandPool );
 }
 
-void Device::destroyDescriptorSetLayout( VkDescriptorSetLayout descriptorSetLayout )
+VkResult Device::resetCommandPool( VkCommandPool           commandPool,
+                                   VkCommandPoolResetFlags flags )
 {
-    vkDestroyDescriptorSetLayout( this->id, descriptorSetLayout, nullptr );
+    return vkResetCommandPool( this->id, commandPool, flags );
 }
 
-VkResult Device::createPipelineLayout( const VkPipelineLayoutCreateInfo* pCreateInfo,
-                                       VkPipelineLayout*                 pPipelineLayout )
+void Device::destroyCommandPool( VkCommandPool commandPool )
 {
-    return vkCreatePipelineLayout( this->id, pCreateInfo, nullptr, pPipelineLayout );
+    vkDestroyCommandPool( this->id, commandPool, nullptr );
 }
 
-void Device::destroyPipelineLayout( VkPipelineLayout pipelineLayout )
+VkResult Device::allocateCommandBuffers(
+    const VkCommandBufferAllocateInfo* pAllocateInfo,
+    VkCommandBuffer*                   pCommandBuffers
+    )
 {
-    vkDestroyPipelineLayout( this->id, pipelineLayout, nullptr );
+    return vkAllocateCommandBuffers( this->id, pAllocateInfo, pCommandBuffers );
 }
 
-VkResult Device::createDescriptorPool( const VkDescriptorPoolCreateInfo* pCreateInfo,
-                                       VkDescriptorPool*                 pDescriptorPool )
+void Device::freeCommandBuffers( VkCommandPool          commandPool,
+                                 uint32_t               commandBufferCount,
+                                 const VkCommandBuffer* pCommandBuffers )
 {
-    return vkCreateDescriptorPool( this->id, pCreateInfo, nullptr, pDescriptorPool );
+    vkFreeCommandBuffers( this->id,
+                          commandPool,
+                          commandBufferCount,
+                          pCommandBuffers );
 }
-
-void Device::destroyDescriptorPool( VkDescriptorPool descriptorPool )
-{
-    vkDestroyDescriptorPool( this->id, descriptorPool, nullptr );
-}
-
-VkResult Device::allocateDescriptorSets( const VkDescriptorSetAllocateInfo* pAllocateInfo,
-                                         VkDescriptorSet*                   pDescriptorSets )
-{
-    return vkAllocateDescriptorSets( this->id, pAllocateInfo, pDescriptorSets );
-}
-
-VkResult Device::freeDescriptorSets( VkDescriptorPool       descriptorPool,
-                                     uint32_t               descriptorSetCount,
-                                     const VkDescriptorSet* pDescriptorSets )
-{
-    return vkFreeDescriptorSets( this->id, descriptorPool,
-                                 descriptorSetCount, pDescriptorSets );
-}
-
-VkResult Device::resetDescriptorPool( VkDescriptorPool           descriptorPool,
-                                      VkDescriptorPoolResetFlags flags )
-{
-    return vkResetDescriptorPool( this->id, descriptorPool, flags );
-}
-
-void Device::updateDescriptorSets( uint32_t                    descriptorWriteCount,
-                                   const VkWriteDescriptorSet* pDescriptorWrites,
-                                   uint32_t                    descriptorCopyCount,
-                                   const VkCopyDescriptorSet*  pDescriptorCopies )
-{
-    vkUpdateDescriptorSets( this->id, descriptorWriteCount, pDescriptorWrites,
-                            descriptorCopyCount, pDescriptorCopies );
-}
-
-// Swapchain Methods
-
-VkResult Device::createSwapchain( const VkSwapchainCreateInfoKHR* pCreateInfo,
-                                  VkSwapchainKHR*                 pSwapchain )
-{
-    return vkCreateSwapchainKHR( this->id, pCreateInfo, nullptr, pSwapchain );
-}
-
-void Device::destroySwapchain( VkSwapchainKHR swapchain )
-{
-    vkDestroySwapchainKHR( this->id, swapchain, nullptr );
-}
-
-VkResult Device::createSharedSwapchains( uint32_t                        swapchainCount,
-                                         const VkSwapchainCreateInfoKHR* pCreateInfos,
-                                         VkSwapchainKHR*                 pSwapchains )
-{
-    return vkCreateSharedSwapchainsKHR( this->id, swapchainCount,
-                                        pCreateInfos, nullptr, pSwapchains );
-}
-
-VkResult Device::getSwapchainImages( VkSwapchainKHR swapchain,
-                                     uint32_t*      pSwapchainImageCount,
-                                     VkImage*       pSwapchainImages )
-{
-    return vkGetSwapchainImagesKHR( this->id, swapchain,
-                                    pSwapchainImageCount, pSwapchainImages );
-}
-
-VkResult Device::acquireNextImage( VkSwapchainKHR swapchain,
-                                   uint64_t       timeout,
-                                   VkSemaphore    semaphore,
-                                   VkFence        fence,
-                                   uint32_t*      pImageIndex )
-{
-    return vkAcquireNextImageKHR( this->id, swapchain, timeout,
-                                  semaphore, fence, pImageIndex );
-}
-

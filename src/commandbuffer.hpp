@@ -105,7 +105,9 @@ public:
     CommandBuffer& operator=( CommandBuffer&& c ) { return *this; }
 
     // Basic Commands
-    void begin( CommandBufferUsage usage = CommandBufferUsage::SIMULTANEOUS_USE );
+    void begin(
+        CommandBufferUsage usage = CommandBufferUsage::SIMULTANEOUS_USE
+        );
     void end();
 
     // RenderPass Commands
