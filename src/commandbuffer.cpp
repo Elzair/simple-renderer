@@ -22,29 +22,13 @@ void CommandPool::deinit()
     this->device->destroyCommandPool( this->id );
 }
 
-CommandBuffer CommandPool::allocateCommandBuffer()
-{
-    VkCommandBufferAllocateInfo allocInfo = {};
-    allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool        = this->id;
-    allocInfo.commandBufferCount = 1;
-
-    VkCommandBuffer cmdbuf;
-    this->device->allocateCommandBuffers( &allocInfo, &cmdbuf );
-   
-    CommandBuffer buffer( this->device, this->queue, this, cmdbuf );
-
-    return buffer;
-}
-
 void CommandPool::reset()
 {
     this->device->resetCommandPool( this->id,
                                     VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT );
 }
 
-void CommandPool::allocateCommandBuffer2( VkCommandBuffer* cmdbuf )
+void CommandPool::allocateCommandBuffer( VkCommandBuffer* cmdbuf )
 {
     VkCommandBufferAllocateInfo allocInfo = {};
     allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -68,7 +52,7 @@ void CommandBuffer::init( Device*      device,
     this->queue  = queue;
     this->pool   = pool;
 
-    this->pool->allocateCommandBuffer2( &this->id );
+    this->pool->allocateCommandBuffer( &this->id );
 }
 
 void CommandBuffer::deinit()

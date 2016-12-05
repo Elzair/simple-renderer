@@ -46,15 +46,13 @@ public:
 
     void reset();
 
-    CommandBuffer allocateCommandBuffer();
-
 private:
 
     VkCommandPool id     = VK_NULL_HANDLE;
     Device*       device = nullptr;
     VkQueue       queue  = VK_NULL_HANDLE;
 
-    void allocateCommandBuffer2( VkCommandBuffer* cmdbuf );
+    void allocateCommandBuffer( VkCommandBuffer* cmdbuf );
     void freeCommandBuffer( VkCommandBuffer* commandBuffer );
 };
 
