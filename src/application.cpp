@@ -248,7 +248,9 @@ void VulkanApplication::drawFrame()
 
     // Submit command buffer
     VkSemaphore waitSemaphores[]      = { this->imageAvailableSemaphore };
-    VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+    VkPipelineStageFlags waitStages[] = {
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+    };
     VkSemaphore signalSemaphores[]    = { this->renderFinishSemaphore };
 
     VkSubmitInfo submitInfo = {};
@@ -385,11 +387,6 @@ void VulkanApplication::createDescriptorSet()
     descriptorWrites[1].descriptorCount = 1;
     descriptorWrites[1].pImageInfo      = &imageInfo;
 
-    //vkUpdateDescriptorSets( this->device.id,
-    //                        descriptorWrites.size(),
-    //                        descriptorWrites.data(),
-    //                        0,
-    //                        nullptr );
     this->device.updateDescriptorSets( descriptorWrites.size(),
                                        descriptorWrites.data(),
                                        0,

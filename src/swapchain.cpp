@@ -134,7 +134,7 @@ void SwapChain::createFramebuffers( VkRenderPass renderPass,
         attachments[0] = this->imageViews[i];
 
         VkFramebufferCreateInfo framebufferCreateInfo = {};
-        framebufferCreateInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferCreateInfo.renderPass      = renderPass;
         framebufferCreateInfo.attachmentCount = attachments.size();
         framebufferCreateInfo.pAttachments    = attachments.data();
@@ -142,8 +142,10 @@ void SwapChain::createFramebuffers( VkRenderPass renderPass,
         framebufferCreateInfo.height          = this->extent.height;
         framebufferCreateInfo.layers          = 1;
 
-        VK_CHECK_RESULT( this->device->createFramebuffer( &framebufferCreateInfo,
-                                                          &this->framebuffers[i] ) );
+        VK_CHECK_RESULT( this->device->createFramebuffer(
+                             &framebufferCreateInfo,
+                             &this->framebuffers[i]
+                             ) );
     }
 }
 
