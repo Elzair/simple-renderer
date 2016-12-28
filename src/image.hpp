@@ -51,7 +51,7 @@ public:
                void*            data     = nullptr,
                VkDeviceSize     dataSize = 0 );
 
-    void deinit(  );
+    void deinit();
 
 protected:
 

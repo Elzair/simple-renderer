@@ -6,12 +6,6 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-const int WIDTH  = 800;
-const int HEIGHT = 600;
-
-const std::string MODEL_PATH   = "models/chalet.obj";
-const std::string TEXTURE_PATH = "textures/chalet.jpg";
-
 static inline void CheckResult( VkResult    res,
                                 const char* file,
                                 const char* func,

@@ -213,8 +213,8 @@ private:
     void getImageMemoryRequirements( VkImage               image,
                                      VkMemoryRequirements* pMemoryRequirements );
     VkResult bindImageMemory( VkImage         image,
-                               VkDeviceMemory memory,
-                               VkDeviceSize   memoryOffset );
+                              VkDeviceMemory memory,
+                              VkDeviceSize   memoryOffset );
 
     // Command Buffer Methods
     VkResult createCommandPool( const VkCommandPoolCreateInfo* pCreateInfo,

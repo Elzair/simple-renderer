@@ -118,8 +118,11 @@ void Image::init( VkPhysicalDevice physical,
 
         // Copy pixel data to staging area
         void* stagingData;
-        this->device->mapMemory( stagingMemory, 0,
-                                 dataSize, 0, &stagingData );
+        this->device->mapMemory( stagingMemory,
+                                 0,
+                                 dataSize,
+                                 0,
+                                 &stagingData );
         std::memcpy( stagingData, data, (std::size_t)dataSize );
         this->device->unmapMemory( stagingMemory );
 

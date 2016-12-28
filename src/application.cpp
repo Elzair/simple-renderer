@@ -22,7 +22,6 @@ VulkanApplication::~VulkanApplication()
     this->model.deinit();
     this->texture.deinit();
     this->depth.deinit();
-    //this->device.destroyCommandPool( this->commandPool );
     this->commandPool.deinit();
     this->graphicsPipeline.deinit();
     this->descriptorSetLayout.deinit();
@@ -165,7 +164,6 @@ void VulkanApplication::mainLoop()
     }
 
     // Wait for logical device to finish
-    //vkDeviceWaitIdle( this->device.id );
     this->device.waitIdle();
 }
 
@@ -333,9 +331,13 @@ void VulkanApplication::createGraphicsPipeline(  )
         attributeInfo2.emplace_back( ai );
     }
 
-    this->graphicsPipeline.init( &this->device, &this->renderPass, &shader,
-                                 &this->descriptorSetLayout, &this->swapchain,
-                                 vertexInfo, attributeInfo2 );
+    this->graphicsPipeline.init( &this->device,
+                                 &this->renderPass,
+                                 &shader,
+                                 &this->descriptorSetLayout,
+                                 &this->swapchain,
+                                 vertexInfo,
+                                 attributeInfo2 );
 }
 
 void VulkanApplication::createCommandPool()

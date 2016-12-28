@@ -109,11 +109,11 @@ public:
     void end();
 
     // RenderPass Commands
-    void beginRenderPass( RenderPass&              renderPass,
-                          VkFramebuffer framebuffer,
+    void beginRenderPass( RenderPass&                renderPass,
+                          VkFramebuffer              framebuffer,
                           VkRect2D                   renderArea,
                           std::vector<VkClearValue>& clearValues,
-                          VkSubpassContents        contents );
+                          VkSubpassContents          contents );
     void nextSubpass( VkSubpassContents contents );
     void endRenderPass();
 
