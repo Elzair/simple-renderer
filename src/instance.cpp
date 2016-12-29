@@ -705,19 +705,19 @@ PhysicalDeviceInfo::PhysicalDeviceInfo( Instance&        instance,
     switch( props.deviceType )
     {
     case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-        this->type = PhysicalDeviceType::Discrete;
+        this->type = PhysicalDeviceType::DISCRETE;
         break;
     case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-        this->type = PhysicalDeviceType::Integrated;
+        this->type = PhysicalDeviceType::INTEGRATED;
         break;
     case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-        this->type = PhysicalDeviceType::Virtual;
+        this->type = PhysicalDeviceType::VIRTUAL;
         break;
     case VK_PHYSICAL_DEVICE_TYPE_CPU:
         this->type = PhysicalDeviceType::CPU;
         break;
     default:
-        this->type = PhysicalDeviceType::Other;
+        this->type = PhysicalDeviceType::OTHER;
         break;
     }
 

@@ -6,7 +6,7 @@
 
 class CommandPool;
 
-enum BufferUsage
+enum class BufferUsage
 {
     VERTEX,
     INDEX,

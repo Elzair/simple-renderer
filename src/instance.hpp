@@ -110,15 +110,6 @@ private:
         );
 };
 
-enum class PhysicalDeviceType : int
-{
-    Other      = VK_PHYSICAL_DEVICE_TYPE_OTHER,
-    Integrated = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU,
-    Discrete   = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
-    Virtual    = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU,
-    CPU        = VK_PHYSICAL_DEVICE_TYPE_CPU
-};
-
 struct PhysicalDeviceFeatures
 {
     friend class PhysicalDeviceInfo;
@@ -344,7 +335,7 @@ struct PhysicalDeviceInfo
 
 public:
 
-    PhysicalDeviceType                         type = PhysicalDeviceType::Other;
+    PhysicalDeviceType                         type = PhysicalDeviceType::OTHER;
     std::string                                name;
     std::vector<PhysicalDeviceQueueFamilyProperties> queueFamilyInfo;
 
