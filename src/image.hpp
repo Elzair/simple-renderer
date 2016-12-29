@@ -21,18 +21,17 @@ public:
     VkDeviceMemory memory = VK_NULL_HANDLE;
     VkImageView    view   = VK_NULL_HANDLE;
 
-    Image( VkPhysicalDevice physical,
-           Device*          device,
-           VkQueue          queue,
-           CommandPool*     commandPool,
-           uint32_t         width,
-           uint32_t         height,
-           VkFormat         format,
-           ImageType        type,
-           void*            data     = nullptr,
-           VkDeviceSize     dataSize = 0 )
+    Image( Device*      device,
+           VkQueue      queue,
+           CommandPool* commandPool,
+           uint32_t     width,
+           uint32_t     height,
+           VkFormat     format,
+           ImageType    type,
+           void*        data     = nullptr,
+           std::size_t  dataSize = 0 )
     {
-        this->init( physical, device, queue, commandPool, width,
+        this->init( device, queue, commandPool, width,
                     height, format, type, data, dataSize );
     }
 
@@ -40,16 +39,15 @@ public:
 
     ~Image() { this->deinit(); }
 
-    void init( VkPhysicalDevice physical,
-               Device*          device,
-               VkQueue          queue,
-               CommandPool*     commandPool,
-               uint32_t         width,
-               uint32_t         height,
-               VkFormat         format,
-               ImageType        type,
-               void*            data     = nullptr,
-               VkDeviceSize     dataSize = 0 );
+    void init( Device*      device,
+               VkQueue      queue,
+               CommandPool* commandPool,
+               uint32_t     width,
+               uint32_t     height,
+               VkFormat     format,
+               ImageType    type,
+               void*        data     = nullptr,
+               std::size_t  dataSize = 0 );
 
     void deinit();
 

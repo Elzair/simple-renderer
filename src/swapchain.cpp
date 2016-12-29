@@ -2,18 +2,17 @@
 
 #include "swapchain.hpp"
 
-void SwapChain::init( VkPhysicalDevice      physical,
-                      Device*               device,
+void SwapChain::init( Device*               device,
                       VkSurfaceKHR          surface,
                       int                   width,
                       int                   height,
                       std::vector<uint32_t> familyIndices )
 {
-    this->physical = physical;
-    this->device   = device;
-    this->surface  = surface;
+    this->device  = device;
+    this->surface = surface;
 
-    auto supported     = QuerySwapChainSupport( this->physical, this->surface );
+    auto supported     = QuerySwapChainSupport( this->device->physicalDevice,
+                                                this->surface );
     auto surfaceFormat = chooseSurfaceFormat( supported.formats );
     auto presentMode   = choosePresentMode( supported.presentModes );
     this->extent       = chooseExtent( supported.capabilities,
@@ -30,7 +29,7 @@ void SwapChain::init( VkPhysicalDevice      physical,
         imageCount = supported.capabilities.maxImageCount;
     }
 
-    // Create struct used to create a swapchain
+    // Create struct used to create a swapchain.
     VkSwapchainKHR oldSwapchain = this->id;
     
     VkSwapchainCreateInfoKHR createInfo = {};
@@ -61,20 +60,20 @@ void SwapChain::init( VkPhysicalDevice      physical,
     createInfo.clipped        = VK_TRUE;
     createInfo.oldSwapchain   = oldSwapchain;
 
-    // Create swapchain
+    // Create swapchain.
     VkSwapchainKHR newSwapchain = VK_NULL_HANDLE;
     VK_CHECK_RESULT( this->device->createSwapchain( &createInfo,
                                                    &newSwapchain ) );
     *&this->id = newSwapchain;
 
-    // Retrieve handles to all swapchain images
+    // Retrieve handles to all swapchain images.
     // Since the implementation can create more images,
-    // we must query the number of images
+    // we must query the number of images.
     this->device->getSwapchainImages( this->id, &imageCount, nullptr );
     this->images.resize( imageCount );
     this->device->getSwapchainImages( this->id, &imageCount, this->images.data() );
 
-    // Create Image Views
+    // Create Image Views.
     this->imageViews.resize( this->images.size() );
 
     for ( uint32_t i = 0; i < this->images.size(); i++ )
@@ -104,15 +103,14 @@ void SwapChain::deinit( bool destroySwapchain )
     this->initialized = ( this->id == VK_NULL_HANDLE ) ? false : true;
 }
 
-void SwapChain::refresh( VkPhysicalDevice      physical,
-                         Device*               device,
+void SwapChain::refresh( Device*               device,
                          VkSurfaceKHR          surface,
                          int                   width,
                          int                   height,
                          std::vector<uint32_t> familyIndices )
 {
     this->deinit( false );
-    this->init( physical, device, surface, width, height, familyIndices );
+    this->init( device, surface, width, height, familyIndices );
 }
 
 void SwapChain::createFramebuffers( VkRenderPass renderPass,
@@ -121,14 +119,14 @@ void SwapChain::createFramebuffers( VkRenderPass renderPass,
 {
     this->framebuffers.resize( this->imageViews.size() );
 
-    // Create attachments vector for VkImageViews
+    // Create attachments vector for VkImageViews.
     std::vector<VkImageView> attachments( numImages + 1 );
     for ( std::size_t i = 0; i < numImages; i++ )
     {
         attachments[i+1] = images[i].view;
     }
 
-    // Create framebuffers for image views
+    // Create Framebuffers for Image Views.
     for ( size_t i = 0; i < this->imageViews.size(); i++ )
     {
         attachments[0] = this->imageViews[i];
@@ -153,14 +151,14 @@ VkSurfaceFormatKHR SwapChain::chooseSurfaceFormat(
     const std::vector<VkSurfaceFormatKHR>& availableFormats
     )
 {
-    // First, check if surface has no preferred format
+    // First, check if surface has no preferred format.
     if ( availableFormats.size() == 1 &&
          availableFormats[0].format == VK_FORMAT_UNDEFINED )
     {
         return { VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
     }
 
-    // Next, check if our preferred format is in the list
+    // Next, check if our preferred format is in the list.
     for ( const auto& format : availableFormats )
     {
         if ( format.format == VK_FORMAT_B8G8R8A8_UNORM &&
@@ -170,7 +168,7 @@ VkSurfaceFormatKHR SwapChain::chooseSurfaceFormat(
         }
     }
 
-    // Otherwise, default to first format
+    // Otherwise, default to the first format.
     return availableFormats[ 0 ];
 }
 

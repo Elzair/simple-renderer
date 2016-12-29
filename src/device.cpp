@@ -3,13 +3,15 @@
 #include "utils.hpp"
 #include "device.hpp"
 
-void Device::init( VkPhysicalDevice               physical,
+void Device::init( VkPhysicalDevice               physicalDevice,
                    VkSurfaceKHR                   surface,
                    const std::vector<const char*> extensions,
                    const std::vector<const char*> validationLayers )
 {
+    this->physicalDevice = physicalDevice;
+    
     // Create queues for both the graphics and presentation families
-    QueueFamilyIndices indices = FindQueueFamilies( physical,
+    QueueFamilyIndices indices = FindQueueFamilies( this->physicalDevice,
                                                     surface );
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     std::set<int> uniqueQueueFamilies = {
@@ -51,7 +53,7 @@ void Device::init( VkPhysicalDevice               physical,
         devCreateInfo.enabledLayerCount = 0;
     }
 
-    VK_CHECK_RESULT( vkCreateDevice( physical,
+    VK_CHECK_RESULT( vkCreateDevice( this->physicalDevice,
                                      &devCreateInfo,
                                      nullptr,
                                      &this->id ) );

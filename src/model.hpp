@@ -58,21 +58,19 @@ public:
     Buffer      indexBuffer;
     std::size_t indexSize;
 
-    Model( VkPhysicalDevice physical,
-           Device*          device,
+    Model( Device*          device,
            VkQueue          queue,
            CommandPool*     commandPool,
            std::string      fileName )
     {
-        this->init( physical, device, queue, commandPool, fileName );
+        this->init( device, queue, commandPool, fileName );
     }
 
     Model() {}
 
     ~Model() { this->deinit(); }
 
-    void init( VkPhysicalDevice physical,
-               Device*          device,
+    void init( Device*          device,
                VkQueue          queue,
                CommandPool*     commandPool,
                std::string      fileName );

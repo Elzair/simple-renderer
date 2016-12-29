@@ -84,8 +84,7 @@ void VulkanApplication::initVulkan( int width, int height )
                        requiredDeviceExtensions,
                        requiredValidationLayers );
 
-    this->swapchain.init( this->physical,
-                          &this->device,
+    this->swapchain.init( &this->device,
                           this->surface,
                           this->width,
                           this->height,
@@ -105,8 +104,7 @@ void VulkanApplication::initVulkan( int width, int height )
     std::cout << "Created Command Pool!" << std::endl;
         
     std::cout << "Creating Depth Image!" << std::endl;
-    this->depth.init( this->physical,
-                      &this->device,
+    this->depth.init( &this->device,
                       this->device.graphicsQueue,
                       &this->commandPool,
                       this->swapchain.extent.width,
@@ -121,22 +119,19 @@ void VulkanApplication::initVulkan( int width, int height )
     std::cout << "Created Framebuffer!" << std::endl;
 
     std::cout << "Creating Texture!" << std::endl;
-    this->texture.init( this->physical,
-                        &this->device,
+    this->texture.init( &this->device,
                         this->device.graphicsQueue,
                         &this->commandPool,
                         TEXTURE_PATH );
     std::cout << "Created Texture!" << std::endl;
 
-    this->model.init( this->physical,
-                      &this->device,
+    this->model.init( &this->device,
                       this->device.graphicsQueue,
                       &this->commandPool,
                       MODEL_PATH );
     std::cout << "Loaded model!" << std::endl;
 
-    this->uniform.init( this->physical,
-                        &this->device,
+    this->uniform.init( &this->device,
                         this->device.graphicsQueue,
                         &this->commandPool,
                         sizeof(UniformBufferObject),
@@ -174,8 +169,7 @@ void VulkanApplication::recreateSwapChain( int width, int height )
     this->width  = width;
     this->height = height;
 
-    this->swapchain.refresh( this->physical,
-                             &this->device,
+    this->swapchain.refresh( &this->device,
                              this->surface,
                              this->width,
                              this->height,
@@ -185,8 +179,7 @@ void VulkanApplication::recreateSwapChain( int width, int height )
 
     this->createGraphicsPipeline();
 
-    this->depth.init( this->physical,
-                      &this->device,
+    this->depth.init( &this->device,
                       this->device.graphicsQueue,
                       &this->commandPool,
                       this->swapchain.extent.width,
@@ -301,7 +294,6 @@ void VulkanApplication::createSurface()
 void VulkanApplication::createRenderPass()
 {
     this->renderPass.init( &this->device,
-                           this->physical,
                            this->swapchain.imageFormat );
 }
 

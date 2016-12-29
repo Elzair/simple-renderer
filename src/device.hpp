@@ -23,19 +23,19 @@ public:
     VkQueue          graphicsQueue = VK_NULL_HANDLE;
     VkQueue          presentQueue  = VK_NULL_HANDLE;
 
-    Device( VkPhysicalDevice               physical,
+    Device( VkPhysicalDevice               physicalDevice,
             VkSurfaceKHR                   surface,
             const std::vector<const char*> extensions,
             const std::vector<const char*> validationLayers )
     {
-        this->init( physical, surface, extensions, validationLayers );
+        this->init( physicalDevice, surface, extensions, validationLayers );
     }
 
     Device() {}
 
     ~Device() { this->deinit(); }
 
-    void init( VkPhysicalDevice               physical,
+    void init( VkPhysicalDevice               physicalDevice,
                VkSurfaceKHR                   surface,
                const std::vector<const char*> extensions,
                const std::vector<const char*> validationLayers );
@@ -121,7 +121,8 @@ public:
 
 private:
 
-    VkDevice id = VK_NULL_HANDLE;
+    VkDevice id                     = VK_NULL_HANDLE;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
     // Render Pass Methods
     VkResult createRenderPass( const VkRenderPassCreateInfo* pCreateInfo,

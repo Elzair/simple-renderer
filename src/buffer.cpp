@@ -2,15 +2,13 @@
 #include "common.hpp"
 #include "buffer.hpp"
 
-void Buffer::init( VkPhysicalDevice physical,
-                   Device*          device,
+void Buffer::init( Device*          device,
                    VkQueue          queue,
                    CommandPool*     commandPool,
                    VkDeviceSize     size,
                    BufferUsage      usage )
 {
     this->device      = device;
-    this->physical    = physical;
     this->queue       = queue;
     this->commandPool = commandPool;
     this->size        = size;
@@ -147,7 +145,7 @@ VkDeviceMemory Buffer::allocateMemory( VkBuffer              buffer,
     VkMemoryAllocateInfo allocInfo = {};
     allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize  = memreqs.size;
-    allocInfo.memoryTypeIndex = FindMemoryType( this->physical,
+    allocInfo.memoryTypeIndex = FindMemoryType( this->device->physicalDevice,
                                                 memreqs.memoryTypeBits,
                                                 props );
 

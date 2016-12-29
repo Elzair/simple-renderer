@@ -11,14 +11,14 @@ public:
     
     RenderPass() {} 
 
-    RenderPass( Device* device, VkPhysicalDevice physical, VkFormat imageFormat )
+    RenderPass( Device* device, VkFormat imageFormat )
     {
-        this->init( device, physical, imageFormat );
+        this->init( device, imageFormat );
     }
 
     ~RenderPass() { this->deinit(); }
 
-    void init( Device* device, VkPhysicalDevice physical, VkFormat imageFormat );
+    void init( Device* device, VkFormat imageFormat );
 
     void deinit();
 

@@ -5,11 +5,10 @@
 
 #include "texture.hpp"
 
-void Texture::init( VkPhysicalDevice physical,
-                    Device*          device,
-                    VkQueue          queue,
-                    CommandPool*     commandPool,
-                    std::string      fileName )
+void Texture::init( Device*      device,
+                    VkQueue      queue,
+                    CommandPool* commandPool,
+                    std::string  fileName )
 {
     // Load image from file
     int texWidth, texHeight, texChannels;
@@ -19,11 +18,10 @@ void Texture::init( VkPhysicalDevice physical,
                                  &texChannels,
                                  STBI_rgb_alpha );
     assert( pixels );
-    VkDeviceSize imageSize = texWidth * texHeight * 4;
+    std::size_t imageSize = texWidth * texHeight * 4;
 
     // Create texture
-    Image::init( physical,
-                 device,
+    Image::init( device,
                  queue,
                  commandPool,
                  texWidth,
@@ -44,6 +42,7 @@ void Texture::deinit()
     {
         this->device->destroySampler( this->sampler );
     }
+
     Image::deinit();
 }
     

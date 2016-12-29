@@ -3,8 +3,7 @@
 #include "device.hpp"
 #include "image.hpp"
 
-void Image::init( VkPhysicalDevice physical,
-                  Device*          device,
+void Image::init( Device*          device,
                   VkQueue          queue,
                   CommandPool*     commandPool,
                   uint32_t         width,
@@ -12,7 +11,7 @@ void Image::init( VkPhysicalDevice physical,
                   VkFormat         format,
                   ImageType        type,
                   void*            data,
-                  VkDeviceSize     dataSize )
+                  std::size_t      dataSize )
 {
     this->device      = device;
     this->queue       = queue;
@@ -67,7 +66,7 @@ void Image::init( VkPhysicalDevice physical,
     VkMemoryAllocateInfo allocInfo = {};
     allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize  = memRequirements.size;
-    allocInfo.memoryTypeIndex = FindMemoryType( physical,
+    allocInfo.memoryTypeIndex = FindMemoryType( this->device->physicalDevice,
                                                 memRequirements.memoryTypeBits,
                                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT );
     
@@ -106,7 +105,7 @@ void Image::init( VkPhysicalDevice physical,
         VkMemoryAllocateInfo saInfo = {};
         saInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         saInfo.allocationSize  = stagingMemReqs.size;
-        saInfo.memoryTypeIndex = FindMemoryType( physical,
+        saInfo.memoryTypeIndex = FindMemoryType( this->device->physicalDevice,
                                                  stagingMemReqs.memoryTypeBits,
                                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                                                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT );
@@ -114,16 +113,18 @@ void Image::init( VkPhysicalDevice physical,
         VK_CHECK_RESULT( this->device->allocateMemory( &saInfo,
                                                        &stagingMemory ) );
 
-        this->device->bindImageMemory( staging, stagingMemory, 0 );
+        VK_CHECK_RESULT( this->device->bindImageMemory( staging,
+                                                        stagingMemory,
+                                                        0 ) );
 
         // Copy pixel data to staging area
         void* stagingData;
-        this->device->mapMemory( stagingMemory,
-                                 0,
-                                 dataSize,
-                                 0,
-                                 &stagingData );
-        std::memcpy( stagingData, data, (std::size_t)dataSize );
+        VK_CHECK_RESULT( this->device->mapMemory( stagingMemory,
+                                                  0,
+                                                  (VkDeviceSize)dataSize,
+                                                  0,
+                                                  &stagingData ) );
+        std::memcpy( stagingData, data, dataSize );
         this->device->unmapMemory( stagingMemory );
 
         // Optimize image layouts

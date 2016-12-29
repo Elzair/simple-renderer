@@ -5,6 +5,8 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "common.hpp"
+
 struct PhysicalDeviceInfo;
 struct PhysicalDeviceFeatures;
 struct PhysicalDeviceLimits;

@@ -20,26 +20,24 @@ public:
     VkBuffer       id;
     VkDeviceMemory memory;
 
-    Buffer( VkPhysicalDevice physical,
-            Device*          device,
-            VkQueue          queue,
-            CommandPool*     commandPool,
-            VkDeviceSize     size,
-            BufferUsage      usage )
+    Buffer( Device*      device,
+            VkQueue      queue,
+            CommandPool* commandPool,
+            VkDeviceSize size,
+            BufferUsage  usage )
     {
-        this->init( physical, device, queue, commandPool, size, usage );
+        this->init( device, queue, commandPool, size, usage );
     }
 
     Buffer() {}
 
     ~Buffer() { this->deinit(); }
 
-    void init( VkPhysicalDevice physical,
-               Device*          device,
-               VkQueue          queue,
-               CommandPool*     commandPool,
-               VkDeviceSize     size,
-               BufferUsage      usage );
+    void init( Device*      device,
+               VkQueue      queue,
+               CommandPool* commandPool,
+               VkDeviceSize size,
+               BufferUsage  usage );
 
     void deinit();
 
@@ -53,7 +51,6 @@ private:
     VkDeviceMemory   stagingMemory = VK_NULL_HANDLE;
 
     Device*          device        = nullptr;
-    VkPhysicalDevice physical      = VK_NULL_HANDLE;
     VkQueue          queue         = VK_NULL_HANDLE;
     CommandPool*     commandPool   = nullptr;
     VkDeviceSize     size          = 0;

@@ -3,9 +3,8 @@
 #include "renderpass.hpp"
 #include "utils.hpp"
 
-void RenderPass::init( Device*          device,
-                       VkPhysicalDevice physical,
-                       VkFormat         imageFormat)
+void RenderPass::init( Device*  device,
+                       VkFormat imageFormat)
 {
     this->device = device;
     
@@ -26,7 +25,7 @@ void RenderPass::init( Device*          device,
 
     // Add depth buffer to render pass
     VkAttachmentDescription depthAttachment = {};
-    depthAttachment.format         = FindDepthFormat( physical );
+    depthAttachment.format         = FindDepthFormat( device->physicalDevice );
     depthAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
     depthAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
     depthAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_DONT_CARE;

@@ -13,24 +13,22 @@ public:
 
     VkSampler sampler = VK_NULL_HANDLE;
 
-    Texture( VkPhysicalDevice physical,
-             Device*          device,
-             VkQueue          queue,
-             CommandPool*     commandPool,
-             std::string      fileName )
+    Texture( Device*      device,
+             VkQueue      queue,
+             CommandPool* commandPool,
+             std::string  fileName )
     {
-        this->init( physical, device, queue, commandPool, fileName );
+        this->init( device, queue, commandPool, fileName );
     }
 
     Texture() {}
 
     ~Texture() { this->deinit(); }
 
-    void init( VkPhysicalDevice physical,
-               Device*          device,
-               VkQueue          queue,
-               CommandPool*     commandPool,
-               std::string      fileName );
+    void init( Device*      device,
+               VkQueue      queue,
+               CommandPool* commandPool,
+               std::string  fileName );
 
     void deinit();
 

@@ -57,8 +57,7 @@ bool Vertex::operator==( const Vertex& other ) const
  * Model Methods
  */
 
-void Model::init( VkPhysicalDevice physical,
-                  Device*          device,
+void Model::init( Device*          device,
                   VkQueue          queue,
                   CommandPool*     commandPool,
                   std::string      fileName )
@@ -106,8 +105,7 @@ void Model::init( VkPhysicalDevice physical,
     }
 
     VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-    this->vertexBuffer.init( physical,
-                             device,
+    this->vertexBuffer.init( device,
                              queue,
                              commandPool,
                              bufferSize,
@@ -117,8 +115,7 @@ void Model::init( VkPhysicalDevice physical,
                              bufferSize );
 
     this->indexSize = sizeof(indices[0]) * indices.size();
-    this->indexBuffer.init( physical,
-                            device,
+    this->indexBuffer.init( device,
                             queue,
                             commandPool,
                             this->indexSize,

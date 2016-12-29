@@ -22,22 +22,20 @@ public:
     std::vector<VkImageView>   imageViews;
     std::vector<VkFramebuffer> framebuffers;
     
-    SwapChain( VkPhysicalDevice      physical,
-               Device*               device,
+    SwapChain( Device*               device,
                VkSurfaceKHR          surface,
                int                   width,
                int                   height,
                std::vector<uint32_t> familyIndices )
     {
-        this->init( physical, device, surface, width, height, familyIndices );
+        this->init( device, surface, width, height, familyIndices );
     }
 
     SwapChain() {}
 
     ~SwapChain() { this->deinit( true ); }
 
-    void init( VkPhysicalDevice      physical,
-               Device*               device,
+    void init( Device*               device,
                VkSurfaceKHR          surface,
                int                   width,
                int                   height,
@@ -45,8 +43,7 @@ public:
     
     void deinit( bool destroySwapchain = true );
 
-    void refresh( VkPhysicalDevice      physical,
-                  Device*               device,
+    void refresh( Device*               device,
                   VkSurfaceKHR          surface,
                   int                   width,
                   int                   height,
@@ -58,7 +55,7 @@ public:
 
 private:
 
-    VkPhysicalDevice physical;
+    VkPhysicalDevice physicalDevice;
     Device*          device;
     VkSurfaceKHR     surface;
     bool             initialized = false;
@@ -74,7 +71,6 @@ private:
     VkExtent2D chooseExtent( const VkSurfaceCapabilitiesKHR& capabilities,
                              int                             width,
                              int                             height );
-    
 
     VkImageView createImageView( VkImage            image,
                                  VkImageAspectFlags aspectFlags );
