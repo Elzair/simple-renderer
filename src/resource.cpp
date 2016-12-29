@@ -3,39 +3,42 @@
 #include <cassert>
 
 void ResourceLayoutContainer::init(
-    Device*                        device,
+    Device*                   device,
     std::vector<ResourceInfo> info
     )
 {
     this->device = device;
-    this->layouts.resize( info.size() );
-    this->bindings.resize( info.size() );
+    this->layouts.reserve( info.size() );
+    this->bindings.reserve( info.size() );
 
-    std::size_t idx = 0;
-    for ( auto& i : info )
+    for ( auto& resource : info )
     {
-        this->bindings[ idx ] = i.bindings;
+        this->bindings.emplace_back( resource.bindings );
 
-        std::vector<VkDescriptorSetLayoutBinding> layout_bindings;
-        layout_bindings.resize( i.bindings.size() );
+        std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
+        layoutBindings.reserve( resource.bindings.size() );
 
-        for ( auto j = 0; j < i.bindings.size(); j++ )
+        for ( auto& binding : resource.bindings )
         {
-            layout_bindings[ j ] = {};
-            layout_bindings[ j ].binding         = i.bindings[ j ].binding;
-            layout_bindings[ j ].descriptorType  = i.bindings[ j ].type;
-            layout_bindings[ j ].descriptorCount = i.bindings[ j ].count;
-            layout_bindings[ j ].stageFlags      = i.bindings[ j ].stages;
+            VkDescriptorSetLayoutBinding tmp;
+            tmp.binding            = binding.binding;
+            tmp.descriptorType     = binding.type;
+            tmp.descriptorCount    = binding.count;
+            tmp.stageFlags         = binding.stages;
+            tmp.pImmutableSamplers = nullptr;
+
+            layoutBindings.emplace_back( tmp );
         }
 
-        VkDescriptorSetLayoutCreateInfo dslcinfo = {};
-        dslcinfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-        dslcinfo.bindingCount = layout_bindings.size();
-        dslcinfo.pBindings    = layout_bindings.data();
+        VkDescriptorSetLayoutCreateInfo createInfo = {};
+        createInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        createInfo.bindingCount = layoutBindings.size();
+        createInfo.pBindings    = layoutBindings.data();
 
-        VK_CHECK_RESULT( this->device->createDescriptorSetLayout( &dslcinfo,
-                                                                  &this->layouts[ idx ] ) );
-        idx++;
+        VkDescriptorSetLayout layout;
+        VK_CHECK_RESULT( this->device->createDescriptorSetLayout( &createInfo,
+                                                                  &layout ) );
+        this->layouts.emplace_back( layout );
     }
 
     this->createPipelineLayout();
@@ -91,7 +94,7 @@ void ResourceLayoutContainer::createPipelineLayout()
     VkPipelineLayoutCreateInfo info = {};
     info.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     info.setLayoutCount         = this->layouts.size();
-    info.pSetLayouts            = &this->layouts[ 0 ];
+    info.pSetLayouts            = this->layouts.data();
     info.pushConstantRangeCount = 0;
     info.pPushConstantRanges    = 0;
 

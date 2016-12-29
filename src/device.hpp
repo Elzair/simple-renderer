@@ -61,40 +61,34 @@ public:
     VkResult queuePresent( VkQueue                 queue,
                            const VkPresentInfoKHR* pPresentInfo );
 
+    // Swapchain Methods
+    VkResult acquireNextImage( VkSwapchainKHR swapchain,
+                               uint64_t       timeout,
+                               VkSemaphore    semaphore,
+                               VkFence        fence,
+                               uint32_t*      pImageIndex );
+
+
     // Semaphores Methods
     VkResult createSemaphore( const VkSemaphoreCreateInfo* pCreateInfo,
                               VkSemaphore*                 pSemaphore );
     void destroySemaphore( VkSemaphore semaphore );
 
     // Descriptor Methods
-    VkResult createDescriptorSetLayout(
-        const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
-        VkDescriptorSetLayout*                 pSetLayout
-        );
-    void destroyDescriptorSetLayout( VkDescriptorSetLayout descriptorSetLayout );
-    VkResult createPipelineLayout(
-        const VkPipelineLayoutCreateInfo* pCreateInfo,
-        VkPipelineLayout*                 pPipelineLayout
-        );
-    void destroyPipelineLayout( VkPipelineLayout pipelineLayout );
-    VkResult createDescriptorPool(
-        const VkDescriptorPoolCreateInfo* pCreateInfo,
-        VkDescriptorPool*                 pDescriptorPool
-        );
-    void destroyDescriptorPool( VkDescriptorPool descriptorPool );
-    VkResult allocateDescriptorSets(
-        const VkDescriptorSetAllocateInfo* pAllocateInfo,
-        VkDescriptorSet*                   pDescriptorSets
-        );
-    VkResult freeDescriptorSets( VkDescriptorPool       descriptorPool,
-                                 uint32_t               descriptorSetCount,
-                                 const VkDescriptorSet* pDescriptorSets );
-    VkResult resetDescriptorPool( VkDescriptorPool           descriptorPool,
-                                  VkDescriptorPoolResetFlags flags );
     void updateDescriptorSets( uint32_t                    descriptorWriteCount,
                                const VkWriteDescriptorSet* pDescriptorWrites,
                                uint32_t                    descriptorCopyCount,
                                const VkCopyDescriptorSet*  pDescriptorCopies );
+
+    // Sampler Methods
+    VkResult createSampler( const VkSamplerCreateInfo* pCreateInfo,
+                            VkSampler*                 pSampler );
+    void destroySampler( VkSampler sampler );
+
+private:
+
+    VkDevice id                     = VK_NULL_HANDLE;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
     // Swapchain Methods
     VkResult createSwapchain( const VkSwapchainCreateInfoKHR* pCreateInfo,
@@ -108,21 +102,6 @@ public:
     VkResult getSwapchainImages( VkSwapchainKHR swapchain,
                                  uint32_t*      pSwapchainImageCount,
                                  VkImage*       pSwapchainImages );
-    VkResult acquireNextImage( VkSwapchainKHR swapchain,
-                               uint64_t       timeout,
-                               VkSemaphore    semaphore,
-                               VkFence        fence,
-                               uint32_t*      pImageIndex );
-
-    // Sampler Methods
-    VkResult createSampler( const VkSamplerCreateInfo* pCreateInfo,
-                            VkSampler*                 pSampler );
-    void destroySampler( VkSampler sampler );
-
-private:
-
-    VkDevice id                     = VK_NULL_HANDLE;
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
     // Render Pass Methods
     VkResult createRenderPass( const VkRenderPassCreateInfo* pCreateInfo,
@@ -185,6 +164,32 @@ private:
     void unmapMemory( VkDeviceMemory memory );
     void getDeviceMemoryCommitment( VkDeviceMemory memory,
                                     VkDeviceSize*  pCommittedMemoryInBytes );
+
+    // Descriptor Methods
+    VkResult createDescriptorSetLayout(
+        const VkDescriptorSetLayoutCreateInfo* pCreateInfo,
+        VkDescriptorSetLayout*                 pSetLayout
+        );
+    void destroyDescriptorSetLayout( VkDescriptorSetLayout descriptorSetLayout );
+    VkResult createPipelineLayout(
+        const VkPipelineLayoutCreateInfo* pCreateInfo,
+        VkPipelineLayout*                 pPipelineLayout
+        );
+    void destroyPipelineLayout( VkPipelineLayout pipelineLayout );
+    VkResult createDescriptorPool(
+        const VkDescriptorPoolCreateInfo* pCreateInfo,
+        VkDescriptorPool*                 pDescriptorPool
+        );
+    void destroyDescriptorPool( VkDescriptorPool descriptorPool );
+    VkResult allocateDescriptorSets(
+        const VkDescriptorSetAllocateInfo* pAllocateInfo,
+        VkDescriptorSet*                   pDescriptorSets
+        );
+    VkResult freeDescriptorSets( VkDescriptorPool       descriptorPool,
+                                 uint32_t               descriptorSetCount,
+                                 const VkDescriptorSet* pDescriptorSets );
+    VkResult resetDescriptorPool( VkDescriptorPool           descriptorPool,
+                                  VkDescriptorPoolResetFlags flags );
 
     // Buffer Methods
     VkResult createBuffer( const VkBufferCreateInfo* pCreateInfo,

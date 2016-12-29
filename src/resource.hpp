@@ -46,15 +46,15 @@ public:
 
     ResourceLayoutContainer() {}
 
-    ResourceLayoutContainer( Device*                        device,
-                               std::vector<ResourceInfo> info )
+    ResourceLayoutContainer( Device*                   device,
+                             std::vector<ResourceInfo> info )
     {
         this->init( device, info );
     }
 
     ~ResourceLayoutContainer() { this->deinit(); }
 
-    void init( Device*                        device,
+    void init( Device*                   device,
                std::vector<ResourceInfo> info  );
 
     void deinit();
