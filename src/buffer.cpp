@@ -13,7 +13,7 @@ void Buffer::init( Device*          device,
     this->commandPool = commandPool;
     this->size        = size;
 
-    // Create staging buffer
+    // Create staging buffer.
         
     VkBufferUsageFlags    uflags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     VkMemoryPropertyFlags pflags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
@@ -22,7 +22,7 @@ void Buffer::init( Device*          device,
     this->staging       = this->createBuffer( uflags );
     this->stagingMemory = this->allocateMemory( staging, pflags );
 
-    //  Create device buffer
+    //  Create device buffer.
         
     uflags = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
     switch( usage )
@@ -103,7 +103,7 @@ void Buffer::copy( void*       data,
 
         commandBuffer.end();
 
-        // Submit CommandBuffer
+        // Submit CommandBuffer.
         VkSubmitInfo submitInfo = {};
         submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;

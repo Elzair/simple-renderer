@@ -7,11 +7,9 @@
 #include "device.hpp"
 #include "image.hpp"
 
-class Texture : public Image
+class Texture
 {
 public:
-
-    VkSampler sampler = VK_NULL_HANDLE;
 
     Texture( Device*      device,
              VkQueue      queue,
@@ -32,7 +30,12 @@ public:
 
     void deinit();
 
+    Image& getImage();
+
+    Sampler& getSampler();
+
 private:
     
-    void createSampler();
+    Image   image;
+    Sampler sampler;
 };

@@ -23,7 +23,7 @@
 #include "model.hpp"
 #include "pipeline.hpp"
 #include "renderpass.hpp"
-#include "resource.hpp"
+#include "descriptor.hpp"
 #include "shader.hpp"
 #include "swapchain.hpp"
 #include "texture.hpp"
@@ -42,49 +42,50 @@ public:
     
     void run( int width, int height );
 
+    VulkanApplication()
+    {}
+
     ~VulkanApplication(  );
 
 private:
     
-    GLFWwindow*               window;
-    int                       width;
-    int                       height;
+    GLFWwindow* window;
+    int         width;
+    int         height;
 
-    Instance                  instance;
-    VkDebugReportCallbackEXT  callback;
-    VkSurfaceKHR              surface;
+    Instance                 instance;
+    VkDebugReportCallbackEXT callback;
+    VkSurfaceKHR             surface;
 
-    VkPhysicalDevice          physical = VK_NULL_HANDLE;
-    Device                    device;
+    VkPhysicalDevice physical = VK_NULL_HANDLE;
+    Device           device;
 
-    SwapChain                 swapchain;
+    SwapChain swapchain;
    
-    RenderPass                renderPass;
+    RenderPass renderPass;
 
-    ResourceLayoutContainer   descriptorSetLayout;
+    std::vector<DescriptorSetLayout> descriptorSetLayouts;
+    PipelineLayout                   pipelineLayout;
 
-    //VkPipeline                graphicsPipeline = VK_NULL_HANDLE;
-    GraphicsPipeline          graphicsPipeline;
+    GraphicsPipeline graphicsPipeline;
 
-    //VkCommandPool             commandPool = VK_NULL_HANDLE;
-    CommandPool               commandPool;
+    CommandPool commandPool;
 
-    Image                     depth;
+    Image depth;
 
-    Texture                   texture;
+    Texture texture;
 
-    Model                     model;
+    Model model;
 
-    Buffer                    uniform;
+    Buffer uniform;
 
-    ResourcePool              descriptorPool;
-    VkDescriptorSet           descriptorSet; // Freed when descriptorPool is destroyed
+    DescriptorPool              descriptorPool;
+    std::vector<DescriptorSet>  descriptorSets; // Freed when descriptorPool is destroyed
 
-    //CommandBuffers            commandBuffers;
     std::vector<CommandBuffer> commandBuffers;
 
-    VkSemaphore               imageAvailableSemaphore = VK_NULL_HANDLE;
-    VkSemaphore               renderFinishSemaphore   = VK_NULL_HANDLE;
+    VkSemaphore imageAvailableSemaphore = VK_NULL_HANDLE;
+    VkSemaphore renderFinishSemaphore   = VK_NULL_HANDLE;
 
     static void onWindowResized( GLFWwindow* window,
                                  int         width,

@@ -154,20 +154,38 @@ void CommandBuffer::bindPipeline( VkPipelineBindPoint pipelineBindPoint,
     vkCmdBindPipeline( this->id, pipelineBindPoint, pipeline.pipeline );
 }
 
-void CommandBuffer::bindDescriptorSets( VkPipelineBindPoint    pipelineBindPoint,
-                                        GraphicsPipeline&      pipeline,
-                                        ResourceLayoutContainer& layout,
-                                        uint32_t               firstSet,
-                                        uint32_t               descriptorSetCount,
-                                        const VkDescriptorSet* pDescriptorSets,
-                                        uint32_t               dynamicOffsetCount,
-                                        const uint32_t*        pDynamicOffsets )
+void CommandBuffer::bindDescriptorSets(
+    VkPipelineBindPoint               pipelineBindPoint,
+    GraphicsPipeline&                 pipeline,
+    PipelineLayout&                   layout,
+    uint32_t                          firstSet,
+    //uint32_t               descriptorSetCount,
+    //const VkDescriptorSet* pDescriptorSets,
+    const std::vector<DescriptorSet>& descriptorSets,
+    uint32_t                          dynamicOffsetCount,
+    const uint32_t*                   pDynamicOffsets
+    )
 {
     assert( this->began );
 
-    vkCmdBindDescriptorSets( this->id, pipelineBindPoint, layout.pipelineLayout,
-                             firstSet, descriptorSetCount, pDescriptorSets,
-                             dynamicOffsetCount, pDynamicOffsets );
+    std::vector<VkDescriptorSet> internalDescSets;
+    internalDescSets.reserve( descriptorSets.size() );
+
+    for ( auto& dset : descriptorSets )
+    {
+        internalDescSets.emplace_back( dset.id );
+    }
+
+    vkCmdBindDescriptorSets( this->id,
+                             pipelineBindPoint,
+                             layout.id,
+                             firstSet,
+                             // descriptorSetCount,
+                             // pDescriptorSets,
+                             internalDescSets.size(),
+                             internalDescSets.data(),
+                             dynamicOffsetCount,
+                             pDynamicOffsets );
 }
 
 void CommandBuffer::bindVertexBuffers( uint32_t             firstBinding,

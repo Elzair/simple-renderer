@@ -46,12 +46,6 @@ uint32_t GraphicsShader::getNumModules() const
     return this->numModules;
 }
 
-const std::array<VkPipelineShaderStageCreateInfo, 5>&
-GraphicsShader::getPipelineInfo() const
-{
-    return this->pipelineInfo;
-}
-
 void GraphicsShader::createShaderModule(
     VkShaderStageFlagBits stage,
     std::vector<uint8_t>  code 

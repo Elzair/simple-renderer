@@ -1,13 +1,14 @@
 #pragma once
 
 #include "common.hpp"
+#include "descriptor.hpp"
 #include "device.hpp"
 #include "renderpass.hpp"
-#include "resource.hpp"
 #include "shader.hpp"
 #include "swapchain.hpp"
 
-class SwapChain;
+class  SwapChain;
+struct PipelineLayout;
 
 struct ScreenDimensions
 {
@@ -27,14 +28,19 @@ public:
         Device*                                        device,
         RenderPass*                                    renderPass,
         GraphicsShader*                                shader,
-        ResourceLayoutContainer*                       layout,
+        PipelineLayout*                                layout,
         SwapChain*                                     swapchain,
         VkVertexInputBindingDescription                vertexInfo,
         std::vector<VkVertexInputAttributeDescription> attributeInfo
         )
     {
-        this->init( device, renderPass, shader, layout,
-                    swapchain, vertexInfo, attributeInfo );
+        this->init( device,
+                    renderPass,
+                    shader,
+                    layout,
+                    swapchain,
+                    vertexInfo,
+                    attributeInfo );
     }
 
     ~GraphicsPipeline() { this->deinit(); }
@@ -43,7 +49,7 @@ public:
         Device*                                        device,
         RenderPass*                                    renderPass,
         GraphicsShader*                                shader,
-        ResourceLayoutContainer*                       layout,
+        PipelineLayout*                                layout,
         SwapChain*                                     swapchain,
         VkVertexInputBindingDescription                vertexInfo,
         std::vector<VkVertexInputAttributeDescription> attributeInfo
@@ -55,6 +61,6 @@ public:
 
 private:
 
-    Device*         device     = nullptr;
-    VkPipeline      pipeline   = VK_NULL_HANDLE;
+    Device*    device     = nullptr;
+    VkPipeline pipeline   = VK_NULL_HANDLE;
 };

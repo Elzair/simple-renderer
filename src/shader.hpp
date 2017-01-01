@@ -11,6 +11,8 @@
 
 class GraphicsShader
 {
+    friend class GraphicsPipeline;
+    
 public:
     
     GraphicsShader() {}
@@ -39,12 +41,10 @@ public:
 
     uint32_t getNumModules() const;
 
-    const std::array<VkPipelineShaderStageCreateInfo, 5>& getPipelineInfo() const;
-
 private:
 
-    Device*                                        device = nullptr;
-    uint32_t                                       numModules;
+    Device*                                        device     = nullptr;
+    uint32_t                                       numModules = 0;
 
     std::array<VkShaderModule, 5>                  modules;
     std::array<VkPipelineShaderStageCreateInfo, 5> pipelineInfo;

@@ -15,6 +15,8 @@ enum ImageType {
 
 class Image 
 {
+    friend class DescriptorSet;
+    
 public:
 
     VkImage        id     = VK_NULL_HANDLE;
@@ -31,13 +33,23 @@ public:
            void*        data     = nullptr,
            std::size_t  dataSize = 0 )
     {
-        this->init( device, queue, commandPool, width,
-                    height, format, type, data, dataSize );
+        this->init( device,
+                    queue,
+                    commandPool,
+                    width,
+                    height,
+                    format,
+                    type,
+                    data,
+                    dataSize );
     }
 
     Image() {}
 
-    ~Image() { this->deinit(); }
+    ~Image()
+    {
+        this->deinit();
+    }
 
     void init( Device*      device,
                VkQueue      queue,
@@ -51,7 +63,7 @@ public:
 
     void deinit();
 
-protected:
+private:
 
     Device*        device      = nullptr;
     VkQueue        queue       = VK_NULL_HANDLE;
@@ -60,6 +72,7 @@ protected:
     uint32_t       height;
     VkFormat       format;
     ImageType      type;
+    VkImageLayout  layout;
 
     void createView( VkImageAspectFlags aspectFlags );
 
@@ -69,4 +82,29 @@ protected:
                            ImageType     type );
 
     void copy( VkImage src );
+};
+
+class Sampler
+{
+    friend class DescriptorSet;
+    
+public:
+
+    Sampler() {}
+
+    Sampler( Device* device )
+    {
+        this->init( device );
+    }
+
+    ~Sampler() { this->deinit(); }
+
+    void init( Device* device );
+
+    void deinit();
+
+private:
+
+    VkSampler id     = VK_NULL_HANDLE;
+    Device*   device = nullptr;
 };

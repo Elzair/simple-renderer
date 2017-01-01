@@ -3,6 +3,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "descriptor.hpp"
 #include "device.hpp"
 #include "buffer.hpp"
 #include "image.hpp"
@@ -13,6 +14,8 @@ class CommandBuffer;
 
 class Buffer;
 class Image;
+
+struct DescriptorSet;
 
 enum class CommandBufferUsage
 {
@@ -70,19 +73,30 @@ public:
                    VkQueue         queue_,
                    CommandPool*    pool_,
                    VkCommandBuffer buffer_ )
-        : device( device_ ), queue( queue_ ), pool( pool_ ), id( buffer_ )
+        : device( device_ ),
+          queue( queue_ ),
+          pool( pool_ ),
+          id( buffer_ )
     {}
 
     CommandBuffer( const CommandBuffer& c )
-        : device( c.device ),
+        : id ( c.id ),
+          device( c.device ),
           queue( c.queue ),
-          id( c.id )
+          pool( c.pool ),
+          began( c.began ),
+          renderPass( c.renderPass ),
+          ended( c.began )
     {}
 
     CommandBuffer( CommandBuffer&& c ) noexcept
-        : device( std::move( c.device ) ),
-          queue( std::move( c.queue ) ),
-          id( std::move( c.id ) )
+        : id( c.id ),
+          device( c.device ),
+          queue( c.queue ),
+          pool( c.pool ),
+          began( c.began ),
+          renderPass( c.renderPass ),
+          ended( c.began )
     {}
 
     CommandBuffer( Device*      device,
@@ -124,14 +138,15 @@ public:
     // State Commands
     void bindPipeline( VkPipelineBindPoint pipelineBindPoint,
                        GraphicsPipeline&   pipeline );
-    void bindDescriptorSets( VkPipelineBindPoint    pipelineBindPoint,
-                             GraphicsPipeline&      pipeline,
-                             ResourceLayoutContainer& layout,
-                             uint32_t               firstSet,
-                             uint32_t               descriptorSetCount,
-                             const VkDescriptorSet* pDescriptorSets,
-                             uint32_t               dynamicOffsetCount,
-                             const uint32_t*        pDynamicOffsets );
+    void bindDescriptorSets( VkPipelineBindPoint               pipelineBindPoint,
+                             GraphicsPipeline&                 pipeline,
+                             PipelineLayout&                   layout,
+                             uint32_t                          firstSet,
+                             //uint32_t               descriptorSetCount,
+                             //const VkDescriptorSet* pDescriptorSets,
+                             const std::vector<DescriptorSet>& descriptorSets,
+                             uint32_t                          dynamicOffsetCount,
+                             const uint32_t*                   pDynamicOffsets );
     void bindVertexBuffers( uint32_t             firstBinding,
                             std::vector<Buffer>& buffers,
                             const VkDeviceSize*  pOffsets );

@@ -27,8 +27,7 @@ void Image::init( Device*          device,
         
     if ( this->type == ImageType::COLOR )
     {
-        usage         = VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-            VK_IMAGE_USAGE_SAMPLED_BIT;
+        usage         = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
         initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
         finalLayout   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         aspectFlags   = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -144,6 +143,7 @@ void Image::init( Device*          device,
 
     // Transition image to final layout
     this->transitionLayout( this->id, initialLayout, finalLayout, type );
+    this->layout = finalLayout;
 
     // Create Image View
     this->createView( aspectFlags );
@@ -318,4 +318,38 @@ void Image::copy( VkImage src )
     this->device->queueWaitIdle( queue );
 
     //commandBuffer.deinit();
+}
+
+void Sampler::init( Device* device )
+{
+    this->device = device;
+
+    VkSamplerCreateInfo samplerInfo = {};
+    samplerInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter               = VK_FILTER_LINEAR;
+    samplerInfo.minFilter               = VK_FILTER_LINEAR;
+    samplerInfo.addressModeU            = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeV            = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeW            = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.anisotropyEnable        = VK_TRUE;
+    samplerInfo.maxAnisotropy           = 16;
+    samplerInfo.borderColor             = VK_BORDER_COLOR_INT_OPAQUE_BLACK ;
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+    samplerInfo.compareEnable           = VK_FALSE;
+    samplerInfo.compareOp               = VK_COMPARE_OP_ALWAYS;
+    samplerInfo.mipmapMode              = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.mipLodBias              = 0.0f;
+    samplerInfo.minLod                  = 0.0f;
+    samplerInfo.maxLod                  = 0.0f;
+
+    VK_CHECK_RESULT( this->device->createSampler( &samplerInfo,
+                                                  &this->id ) );
+}
+
+void Sampler::deinit(  )
+{
+    if ( this->id != VK_NULL_HANDLE )
+    {
+        this->device->destroySampler( this->id );
+    }
 }

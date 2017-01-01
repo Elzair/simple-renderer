@@ -1,3 +1,5 @@
+#include "common.hpp"
+#include "device.hpp"
 #include "model.hpp"
 #include "pipeline.hpp"
 
@@ -5,7 +7,7 @@ void GraphicsPipeline::init(
         Device*                                        device,
         RenderPass*                                    renderPass,
         GraphicsShader*                                shader,
-        ResourceLayoutContainer*                       layout,
+        PipelineLayout*                                layout,
         SwapChain*                                     swapchain,
         VkVertexInputBindingDescription                vertexInfo,
         std::vector<VkVertexInputAttributeDescription> attributeInfo
@@ -112,7 +114,7 @@ void GraphicsPipeline::init(
     VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
     pipelineCreateInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineCreateInfo.stageCount          = shader->getNumModules();
-    pipelineCreateInfo.pStages             = &shader->getPipelineInfo()[ 0 ];
+    pipelineCreateInfo.pStages             = shader->pipelineInfo.data();
     pipelineCreateInfo.pVertexInputState   = &vertexInputCreateInfo;
     pipelineCreateInfo.pInputAssemblyState = &inputAssemblyCreateInfo;
     pipelineCreateInfo.pViewportState      = &viewportStateCreateInfo;
@@ -121,7 +123,7 @@ void GraphicsPipeline::init(
     pipelineCreateInfo.pDepthStencilState  = &depthStencil;
     pipelineCreateInfo.pColorBlendState    = &colorBlendCreateInfo;
     pipelineCreateInfo.pDynamicState       = nullptr;
-    pipelineCreateInfo.layout              = layout->getPipelineLayout();
+    pipelineCreateInfo.layout              = layout->id;
     pipelineCreateInfo.renderPass          = renderPass->getRenderPass();
     pipelineCreateInfo.subpass             = 0;
     pipelineCreateInfo.basePipelineHandle  = VK_NULL_HANDLE;

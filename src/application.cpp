@@ -1,6 +1,4 @@
 #include "application.hpp"
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
 
 /*
  * Public Methods
@@ -24,7 +22,12 @@ VulkanApplication::~VulkanApplication()
     this->depth.deinit();
     this->commandPool.deinit();
     this->graphicsPipeline.deinit();
-    this->descriptorSetLayout.deinit();
+
+    for ( auto& dsetlayout : this->descriptorSetLayouts )
+    {
+        dsetlayout.deinit();
+    }
+    
     this->renderPass.deinit();
     this->swapchain.deinit();
     vkDestroySurfaceKHR( this->instance.id, this->surface, nullptr );
@@ -139,6 +142,7 @@ void VulkanApplication::initVulkan( int width, int height )
     std::cout << "Created Uniform Buffer!" << std::endl;
         
     this->createDescriptorPool();
+    std::cout << "Created Descriptor Pool!" << std::endl;
     this->createDescriptorSet();
     std::cout << "Created Descriptor Sets!" << std::endl;
         
@@ -299,12 +303,19 @@ void VulkanApplication::createRenderPass()
 
 void VulkanApplication::createDescriptorSetLayout()
 {
-    std::vector<ResourceBinding> bindings;
-    bindings.emplace_back( 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                           1, VK_SHADER_STAGE_VERTEX_BIT );
-    bindings.emplace_back( 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                           1, VK_SHADER_STAGE_FRAGMENT_BIT ); 
-    this->descriptorSetLayout.init( &this->device, { { bindings } } );
+    std::vector<DescriptorBinding> bindings;
+    bindings.emplace_back( 0,
+                           DescriptorType::UNIFORM_BUFFER,
+                           1,
+                           VK_SHADER_STAGE_VERTEX_BIT );
+    bindings.emplace_back( 1,
+                           DescriptorType::COMBINED_IMAGE_SAMPLER,
+                           1,
+                           VK_SHADER_STAGE_FRAGMENT_BIT ); 
+    this->descriptorSetLayouts.emplace_back( &this->device, bindings );
+
+    this->pipelineLayout.init( &this->device,
+                               this->descriptorSetLayouts );
 }
 
 void VulkanApplication::createGraphicsPipeline(  )
@@ -318,15 +329,18 @@ void VulkanApplication::createGraphicsPipeline(  )
     auto vertexInfo    = Vertex::getBindingDescription();
     auto attributeInfo = Vertex::getAttributeDescriptions();
     std::vector<VkVertexInputAttributeDescription> attributeInfo2;
+
     for ( auto& ai : attributeInfo )
     {
         attributeInfo2.emplace_back( ai );
     }
 
+    this->pipelineLayout.init( &this->device, this->descriptorSetLayouts );
+
     this->graphicsPipeline.init( &this->device,
                                  &this->renderPass,
                                  &shader,
-                                 &this->descriptorSetLayout,
+                                 &this->pipelineLayout,
                                  &this->swapchain,
                                  vertexInfo,
                                  attributeInfo2 );
@@ -342,55 +356,29 @@ void VulkanApplication::createCommandPool()
 void VulkanApplication::createDescriptorPool()
 {
     this->descriptorPool.init( &this->device,
-                               20,
-                               &this->descriptorSetLayout );
+                               &this->descriptorSetLayouts[ 0 ],
+                               20 );
 }
 
 void VulkanApplication::createDescriptorSet()
 {
-    this->descriptorSet = this->descriptorPool.allocateDescriptorSet();
-
-    // Now create buffer to hold uniform data
-    VkDescriptorBufferInfo bufferInfo = {};
-    bufferInfo.buffer = this->uniform.id;
-    bufferInfo.offset = 0;
-    bufferInfo.range  = sizeof(UniformBufferObject);
-
-    // Create image to hold texture data
-    VkDescriptorImageInfo imageInfo = {};
-    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageInfo.imageView   = this->texture.view;
-    imageInfo.sampler     = this->texture.sampler;
-
-    // Update descriptors
-    std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
-    
-    descriptorWrites[0].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrites[0].dstSet          = this->descriptorSet;
-    descriptorWrites[0].dstBinding      = 0;
-    descriptorWrites[0].dstArrayElement = 0;
-    descriptorWrites[0].descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    descriptorWrites[0].descriptorCount = 1;
-    descriptorWrites[0].pBufferInfo     = &bufferInfo;
-    
-    descriptorWrites[1].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrites[1].dstSet          = this->descriptorSet;
-    descriptorWrites[1].dstBinding      = 1;
-    descriptorWrites[1].dstArrayElement = 0;
-    descriptorWrites[1].descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    descriptorWrites[1].descriptorCount = 1;
-    descriptorWrites[1].pImageInfo      = &imageInfo;
-
-    this->device.updateDescriptorSets( descriptorWrites.size(),
-                                       descriptorWrites.data(),
-                                       0,
-                                       nullptr );
+    std::cout << "Creating descriptor sets!" << std::endl;
+    this->descriptorSets.emplace_back( this->descriptorPool.allocateDescriptorSet() );
+    std::cout << "Created descriptor sets!" << std::endl;
+    this->descriptorSets[ 0 ].update( this->uniform, 0, 0 );
+    this->descriptorSets[ 0 ].update( this->texture.getImage(),
+                                      this->texture.getSampler(),
+                                      1,
+                                      0 );
 }
 
 void VulkanApplication::createCommandBuffers()
 {
+    std::cout << "Creating Command Buffers!" << std::endl;
     this->commandPool.reset();
+    std::cout << "Reset Command Buffers!" << std::endl;
     this->commandBuffers.resize( this->swapchain.framebuffers.size() );
+    std::cout << "Resized Command Buffers!" << std::endl;
 
     for ( auto& cmdbuf : this->commandBuffers )
     {
@@ -431,10 +419,9 @@ void VulkanApplication::createCommandBuffers()
         // Bind uniform buffer(s)
         cmdbuf.bindDescriptorSets( VK_PIPELINE_BIND_POINT_GRAPHICS,
                                    this->graphicsPipeline,
-                                   this->descriptorSetLayout,
+                                   this->pipelineLayout,
                                    0,
-                                   1,
-                                   &this->descriptorSet,
+                                   this->descriptorSets,
                                    0,
                                    nullptr );
       

@@ -15,6 +15,8 @@ enum class BufferUsage
 
 class Buffer
 {
+    friend class DescriptorSet;
+
 public:
 
     VkBuffer       id;
@@ -41,9 +43,9 @@ public:
 
     void deinit();
 
-    void copy( void*  data     = nullptr,
-               bool   toDevice = true,
-               size_t len      = UINT32_MAX );
+    void copy( void*       data     = nullptr,
+               bool        toDevice = true,
+               std::size_t len      = UINT32_MAX );
 
 private:
 

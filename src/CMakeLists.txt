@@ -3,6 +3,7 @@ set(SOURCE_FILES
   application.cpp
   buffer.cpp
   commandbuffer.cpp
+  descriptor.cpp
   device.cpp
   image.cpp
   instance.cpp
@@ -10,7 +11,6 @@ set(SOURCE_FILES
   model.cpp
   pipeline.cpp
   renderpass.cpp
-  resource.cpp
   shader.cpp
   swapchain.cpp
   texture.cpp

@@ -7,12 +7,14 @@ class Device
 {
     friend class Buffer;
     friend class CommandPool;
+    friend class DescriptorPool;
+    friend class DescriptorSetLayout;
+    friend class DescriptorSetLayoutContainer;
     friend class Image;
     friend class GraphicsPipeline;
     friend class GraphicsShader;
+    friend class PipelineLayout;
     friend class RenderPass;
-    friend class ResourceLayoutContainer;
-    friend class ResourcePool;
     friend class SwapChain;
     
 public:
